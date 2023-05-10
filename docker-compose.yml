@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: ./server
+      target: dev
+    command: npm run start:dev
+    volumes:
+      - ./server:/home/node
+      - /home/node/node_modules
+    ports:
+      - "3000:3000"
+      - "5555:5555"
+    depends_on:
+      - db
+
+  front:
+    build:
+      context: ./front
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./front:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
