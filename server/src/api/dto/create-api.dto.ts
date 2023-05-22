@@ -1,1 +1,3 @@
-export class CreateApiDto {}
+export class CreateApiDto {
+  data: any;
+}

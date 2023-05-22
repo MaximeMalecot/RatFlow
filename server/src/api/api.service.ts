@@ -1,10 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateApiDto } from './dto/create-api.dto';
-import { UpdateApiDto } from './dto/update-api.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ApiService {
-  create(createApiDto: CreateApiDto) {
-    return 'This action adds a new api';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createApiDto: CreateApiDto) {
+    try {
+      const res = await this.prisma.api.create({
+        data: createApiDto,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
   }
 }
