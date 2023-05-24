@@ -2,15 +2,17 @@ version: "3.8"
 
 services:
   db:
-    image: mongo
-    ports:
-      - 27017:27017
+    image: 'bitnami/mongodb:4.4'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: password
+      - MONGODB_ADVERTISED_HOSTNAME=127.0.0.1
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_ROOT_USER=root
+      - MONGODB_ROOT_PASSWORD=password
+      - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    ports:
+      - '27017:27017'
     volumes:
-      - db_data:/data/db
-    working_dir: /usr/local/
+      - 'db_data:/bitnami/mongodb'
 
   server:
     build:
@@ -22,7 +24,7 @@ services:
       - /home/node/node_modules
     environment:
       - NODE_ENV=dev
-      - DATABASE_URL=mongodb://root:password@db/ratflow?authSource=admin
+      - DATABASE_URL=mongodb://root:password@db/ratflow?authSource=admin&directConnection=true
     ports:
       - "3000:3000"
       - "5555:5555"

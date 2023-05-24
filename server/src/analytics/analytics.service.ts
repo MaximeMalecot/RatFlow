@@ -7,8 +7,12 @@ export class AnalyticsService {
     private analytics: Object[] = [];
     constructor(private prisma: PrismaService) {}
 
-    create(createAnalyticsDto: CreateAnalyticsDto) {
-        throw new Error('Method not implemented.');
+    async create(data: CreateAnalyticsDto) {
+        const res = await this.prisma.analytics.create({
+            data
+        });
+        
+        return res;
     }
 
     async findAll() {
