@@ -20,6 +20,9 @@ services:
     volumes:
       - ./server:/home/node
       - /home/node/node_modules
+    environment:
+      - NODE_ENV=dev
+      - DATABASE_URL=mongodb://root:password@db/ratflow?authSource=admin
     ports:
       - "3000:3000"
       - "5555:5555"
