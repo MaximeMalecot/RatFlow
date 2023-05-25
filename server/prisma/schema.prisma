@@ -10,14 +10,41 @@ datasource db {
 model User {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   email String @unique
-  name String?
   password String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime? @updatedAt
+  ownedApps App[] @relation(name: "owner")
+  apps AppUser[] @relation(name: "users")
+  roles UserRole[] @default([USER])
+}
+
+model AppUser {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user User @relation(name: "users",fields: [userId], references: [id])
+  appId String @db.ObjectId
+  app App @relation(name: "users",fields: [appId], references: [id])
+}
+
+model App {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  appSecret String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  ownerId String @db.ObjectId
+  owner User @relation(name: "owner",fields: [ownerId], references: [id])
+  apps AppUser[] @relation(name: "users")
+  urls String[]
 }
 
 model Analytics {
   id String @id @default(auto()) @map("_id") @db.ObjectId
   name String
-  userId String? @db.ObjectId
+  appId String? @db.ObjectId
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }
