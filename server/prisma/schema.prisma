@@ -54,7 +54,7 @@ model Analytics {
   clientId String?
   sessionId String?
   service String?
-  eventName String?
+  eventName String
   url String
   userAgent String?
   ip String?

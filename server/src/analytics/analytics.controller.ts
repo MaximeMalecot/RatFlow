@@ -1,20 +1,22 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { AnalyticsService } from './analytics.service';
-import { CreateAnalyticsDto } from './dto/create-analytics.dto';
+import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
+import { AnalyticsService } from "./analytics.service";
+import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
+import { AnalyticsGuard } from "./guards/analytics.guard";
 
 @ApiTags("analytics")
-@Controller('analytics')
+@Controller("analytics")
 export class AnalyticsController {
-  constructor(private readonly analyticsService: AnalyticsService) {}
+    constructor(private readonly analyticsService: AnalyticsService) {}
 
-  @Post()
-  create(@Body() createAnalyticsDto: CreateAnalyticsDto) {
-    return this.analyticsService.create(createAnalyticsDto);
-  }
+    @UseGuards(AnalyticsGuard)
+    @Post()
+    create(@Body() createAnalyticsDto: CreateAnalyticsDto) {
+        return this.analyticsService.create(createAnalyticsDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.analyticsService.findAll();
-  }
+    @Get()
+    findAll() {
+        return this.analyticsService.findAll();
+    }
 }

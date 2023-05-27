@@ -24,8 +24,8 @@ export class AppsController {
     }
 
     @Get("self")
-    getSelfApps() {
-        return this.appsService.getSelfApps();
+    getSelfApps(@Req() req: any) {
+        return this.appsService.getSelfApps(req.user.id);
     }
 
     @Get(":id")
