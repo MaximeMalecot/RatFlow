@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
@@ -11,8 +11,8 @@ export class AnalyticsController {
 
     @UseGuards(AnalyticsGuard)
     @Post()
-    create(@Body() createAnalyticsDto: CreateAnalyticsDto) {
-        return this.analyticsService.create(createAnalyticsDto);
+    create(@Body() createAnalyticsDto: CreateAnalyticsDto, @Req() req: any) {
+        return this.analyticsService.create(createAnalyticsDto, req.app.id);
     }
 
     @Get()

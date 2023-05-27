@@ -18,6 +18,7 @@ export class AnalyticsGuard implements CanActivate {
         if (!app) {
             throw new NotFoundException("App not found");
         }
+        request.app = app;
         if (body.appSecret) {
             return app.appSecret === body.appSecret;
         }

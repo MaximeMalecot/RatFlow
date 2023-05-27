@@ -1,4 +1,4 @@
-import { IsDate, IsObject, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsObject, IsOptional, IsString } from "class-validator";
 
 export class CreateAnalyticsDto {
     @IsString()
@@ -22,7 +22,7 @@ export class CreateAnalyticsDto {
     @IsString()
     @IsOptional()
     public ip?: string;
-    @IsDate()
+    @IsDateString()
     public date: string;
     @IsObject()
     @IsOptional()
