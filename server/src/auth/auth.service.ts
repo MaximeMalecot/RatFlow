@@ -42,7 +42,7 @@ export class AuthService {
                 }
                 throw err;
             }
-            throw new HttpException(err, 500);
+            throw new HttpException(err.message, 500, err);
         }
     }
 

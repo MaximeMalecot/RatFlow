@@ -1,4 +1,5 @@
 import {
+    Body,
     Controller,
     Delete,
     Get,
@@ -6,9 +7,11 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
+    Req,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { AppsService } from "./apps.service";
+import { CreateAppDto } from "./dto/create-app.dto";
 
 @ApiTags("apps")
 @Controller("apps")
@@ -31,8 +34,8 @@ export class AppsController {
     }
 
     @Post("")
-    createApp() {
-        return this.appsService.createApp();
+    createApp(@Body() createAppDto: CreateAppDto, @Req() req: any) {
+        return this.appsService.createApp(createAppDto, req.user.id);
     }
 
     @Patch(":id/addUser")
