@@ -1,6 +1,8 @@
-import { IsString } from "class-validator";
+import { IsDate, IsString } from "class-validator";
 
 export class CreateAnalyticsDto {
     @IsString()
-    public name: string;
+    public url: string;
+    @IsDate()
+    public date: string;
 }

@@ -35,13 +35,34 @@ model App {
   ownerId String @db.ObjectId
   owner User @relation(name: "owner",fields: [ownerId], references: [id])
   apps AppUser[] @relation(name: "users")
-  urls String[]
+  origins String[]
+  tags Tag[] @relation()
+}
+
+model Tag {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime? @updatedAt
+  appId String @db.ObjectId
+  app App @relation(fields: [appId], references: [id])
+  analytics Analytics[] @relation()
 }
 
 model Analytics {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  clientId String?
+  sessionId String?
+  service String?
+  eventName String?
+  url String
+  userAgent String?
+  ip String?
+  date DateTime
+  customData Json?
   appId String? @db.ObjectId
+  tagId String? @db.ObjectId
+  tag Tag? @relation(fields: [tagId], references: [id])
 }
 
 enum UserRole {
