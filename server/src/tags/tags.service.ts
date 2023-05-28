@@ -50,6 +50,7 @@ export class TagsService {
                     id,
                 },
                 select: {
+                    appId: true,
                     id: true,
                     name: true,
                     createdAt: true,
@@ -60,6 +61,30 @@ export class TagsService {
             }
 
             return res;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            if (e?.code) {
+                throw new BadRequestException("Malformed data");
+            }
+            throw new InternalServerErrorException(e.message);
+        }
+    }
+
+    async findAllByAppId(appId: string) {
+        try {
+            return await this.prisma.tag.findMany({
+                where: {
+                    appId,
+                },
+                select: {
+                    appId: true,
+                    id: true,
+                    name: true,
+                    createdAt: true,
+                },
+            });
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;
