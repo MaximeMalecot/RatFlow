@@ -1,12 +1,4 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    ParseUUIDPipe,
-    Post,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { TagsService } from "./tags.service";
 
@@ -20,12 +12,12 @@ export class TagsController {
     }
 
     @Get(":id")
-    findOne(@Param("id", ParseUUIDPipe) id: string) {
+    findOne(@Param("id") id: string) {
         return this.tagsService.findOne(id);
     }
 
     @Delete(":id")
-    remove(@Param("id", ParseUUIDPipe) id: string) {
+    remove(@Param("id") id: string) {
         return this.tagsService.remove(id);
     }
 }

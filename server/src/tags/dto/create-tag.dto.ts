@@ -1,8 +1,8 @@
-import { IsString, IsUUID } from "class-validator";
+import { IsString } from "class-validator";
 
 export class CreateTagDto {
     @IsString()
     public name: string;
-    @IsUUID()
+    @IsString()
     public appId: string;
 }

@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     HttpException,
     Injectable,
     InternalServerErrorException,
@@ -12,14 +13,14 @@ export class TagsService {
 
     async create(createTagDto: CreateTagDto) {
         try {
-            const exists = this.prisma.tag.findMany({
+            const exists = await this.prisma.tag.findFirst({
                 where: {
                     name: createTagDto.name,
                     appId: createTagDto.appId,
                 },
             });
             if (exists) {
-                throw new Error(
+                throw new BadRequestException(
                     "Tag with this name already exists for this app"
                 );
             }
@@ -35,6 +36,9 @@ export class TagsService {
             if (e instanceof HttpException) {
                 throw e;
             }
+            if (e?.code) {
+                throw new BadRequestException("Malformed data");
+            }
             throw new InternalServerErrorException(e.message);
         }
     }
@@ -45,27 +49,57 @@ export class TagsService {
                 where: {
                     id,
                 },
+                select: {
+                    id: true,
+                    name: true,
+                    createdAt: true,
+                },
             });
+            if (!res) {
+                throw new BadRequestException("Tag does not exist");
+            }
+
             return res;
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;
             }
+            if (e?.code) {
+                throw new BadRequestException("Malformed data");
+            }
             throw new InternalServerErrorException(e.message);
         }
     }
 
-    remove(id: string) {
+    async remove(id: string) {
         try {
-            const res = this.prisma.tag.delete({
+            const exists = await this.prisma.tag.findUnique({
                 where: {
                     id,
                 },
             });
-            return res;
+
+            if (!exists) {
+                throw new BadRequestException("Tag does not exist");
+            }
+
+            const res = await this.prisma.tag.delete({
+                where: {
+                    id,
+                },
+            });
+
+            if (res) {
+                return { success: true };
+            } else {
+                return { success: false };
+            }
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;
+            }
+            if (e?.code) {
+                throw new BadRequestException("Malformed data");
             }
             throw new InternalServerErrorException(e.message);
         }
