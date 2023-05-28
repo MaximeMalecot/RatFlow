@@ -7,13 +7,14 @@ import { AuthModule } from './auth/auth.module';
 import { AppsModule } from './apps/apps.module';
 import { APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [AnalyticsModule, UsersModule, AuthModule, AppsModule, 
     ThrottlerModule.forRoot({
         ttl: 60,
         limit: 15,
-    }),],
+    }), TagsModule,],
   controllers: [AppController],
   providers: [
     AppService,

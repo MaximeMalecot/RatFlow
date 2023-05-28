@@ -44,7 +44,7 @@ export class AppsService {
 
     async createApp(data: CreateAppDto, ownerId: string) {
         try {
-            const exists = await this.prisma.app.findMany({
+            const exists = await this.prisma.app.findFirst({
                 where: {
                     name: data.name,
                 },
