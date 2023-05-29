@@ -10,7 +10,9 @@ import { AppsModule } from "./apps/apps.module";
 import { AuthModule } from "./auth/auth.module";
 import { appConstant } from "./constant";
 import { UserCommand } from "./users/users.command";
+import { TagsModule } from "./tags/tags.module";
 import { UsersModule } from "./users/users.module";
+
 @Module({
     imports: [
         AnalyticsModule,
@@ -21,7 +23,7 @@ import { UsersModule } from "./users/users.module";
             ttl: 60,
             limit: 15,
         }),
-        // TagsModule,
+        TagsModule,
         UsersModule,
         CommandModule,
     ],

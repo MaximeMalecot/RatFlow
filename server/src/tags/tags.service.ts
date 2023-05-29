@@ -1,133 +1,94 @@
-import { Injectable } from "@nestjs/common";
+import {
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AppsService } from "src/apps/apps.service";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { Tag } from "./schema/tags.schema";
 
 @Injectable()
 export class TagsService {
-    constructor(@InjectModel(Tag.name) private tagModel: Model<Tag>) {}
+    constructor(
+        @InjectModel(Tag.name) private tagModel: Model<Tag>,
+        private readonly appsService: AppsService
+    ) {}
 
     async create(createTagDto: CreateTagDto) {
-        // try {
-        //     const exists = await this.prisma.tag.findFirst({
-        //         where: {
-        //             name: createTagDto.name,
-        //             appId: createTagDto.appId,
-        //         },
-        //     });
-        //     if (exists) {
-        //         throw new BadRequestException(
-        //             "Tag with this name already exists for this app"
-        //         );
-        //     }
+        try {
+            const app = await this.appsService.getApp(createTagDto.appId);
+            if (!app) {
+                throw new NotFoundException("App not found");
+            }
+            const tagExists = await this.tagModel.findOne({
+                name: createTagDto.name,
+                appId: createTagDto.appId,
+            });
+            if (tagExists) {
+                throw new HttpException(
+                    "Tag with this name already exists",
+                    400
+                );
+            }
 
-        //     const res = await this.prisma.tag.create({
-        //         data: {
-        //             ...createTagDto,
-        //         },
-        //     });
-
-        //     return res;
-        // } catch (e) {
-        //     if (e instanceof HttpException) {
-        //         throw e;
-        //     }
-        //     if (e?.code) {
-        //         throw new BadRequestException("Malformed data");
-        //     }
-        //     throw new InternalServerErrorException(e.message);
-        // }
-        return;
+            const tag = new this.tagModel(createTagDto);
+            return await tag.save();
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
     }
 
     async findOne(id: string) {
-        // try {
-        //     const res = await this.prisma.tag.findUnique({
-        //         where: {
-        //             id,
-        //         },
-        //         select: {
-        //             appId: true,
-        //             id: true,
-        //             name: true,
-        //             createdAt: true,
-        //         },
-        //     });
-        //     if (!res) {
-        //         throw new BadRequestException("Tag does not exist");
-        //     }
+        try {
+            const tag = await this.tagModel.findById(id);
 
-        //     return res;
-        // } catch (e) {
-        //     if (e instanceof HttpException) {
-        //         throw e;
-        //     }
-        //     if (e?.code) {
-        //         throw new BadRequestException("Malformed data");
-        //     }
-        //     throw new InternalServerErrorException(e.message);
-        // }
-        return;
+            if (!tag) {
+                throw new NotFoundException("Tag not found");
+            }
+
+            return tag;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
     }
 
     async findAllByAppId(appId: string) {
-        // try {
-        //     return await this.prisma.tag.findMany({
-        //         where: {
-        //             appId,
-        //         },
-        //         select: {
-        //             appId: true,
-        //             id: true,
-        //             name: true,
-        //             createdAt: true,
-        //         },
-        //     });
-        // } catch (e) {
-        //     if (e instanceof HttpException) {
-        //         throw e;
-        //     }
-        //     if (e?.code) {
-        //         throw new BadRequestException("Malformed data");
-        //     }
-        //     throw new InternalServerErrorException(e.message);
-        // }
-        return;
+        try {
+            return await this.tagModel.find(
+                { appId },
+                { appId: true, name: true, createdAt: true }
+            );
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
     }
 
     async remove(id: string) {
-        // try {
-        //     const exists = await this.prisma.tag.findUnique({
-        //         where: {
-        //             id,
-        //         },
-        //     });
+        try {
+            const tag = await this.tagModel.deleteOne({ _id: id });
+            console.log(tag);
+            if (tag.deletedCount === 0) {
+                throw new NotFoundException("Tag not deleted");
+            }
+            return { success: true };
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
 
-        //     if (!exists) {
-        //         throw new BadRequestException("Tag does not exist");
-        //     }
-
-        //     const res = await this.prisma.tag.delete({
-        //         where: {
-        //             id,
-        //         },
-        //     });
-
-        //     if (res) {
-        //         return { success: true };
-        //     } else {
-        //         return { success: false };
-        //     }
-        // } catch (e) {
-        //     if (e instanceof HttpException) {
-        //         throw e;
-        //     }
-        //     if (e?.code) {
-        //         throw new BadRequestException("Malformed data");
-        //     }
-        //     throw new InternalServerErrorException(e.message);
-        // }
-        return;
+            throw new InternalServerErrorException(e.message);
+        }
     }
 }
