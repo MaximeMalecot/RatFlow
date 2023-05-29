@@ -1,18 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { hash } from "bcrypt";
-import { Command } from "nestjs-command";
-import { UsersService } from "../users.service";
+import { UsersService } from "../../users/users.service";
 
 @Injectable()
-export class UserCommand {
+export class UserSeed {
     constructor(private readonly usersService: UsersService) {}
 
-    @Command({
-        command: "user:seed",
-        describe: "create users",
-    })
     async seed() {
-        this.usersService.clear();
+        console.log("SEEDING USERS -----");
+        await this.usersService.clear();
         let user = {
             email: "user@user.com",
             password: "User123+=",

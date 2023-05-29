@@ -89,6 +89,10 @@ export class AppsService {
         return app.origins;
     }
 
+    async findAll() {
+        return this.appModel.find({});
+    }
+
     async clear() {
         await this.appModel.deleteMany({});
     }

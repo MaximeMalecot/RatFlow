@@ -32,7 +32,7 @@ export class UsersService {
         }
     }
 
-    findAll(): Promise<User[] | null> {
+    findAll() {
         return this.userModel.find().exec();
     }
 

@@ -7,12 +7,13 @@ import { AnalyticsModule } from "./analytics/analytics.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AppsModule } from "./apps/apps.module";
-import { AppCommand } from "./apps/command/apps.command";
 import { AuthModule } from "./auth/auth.module";
-import { SeedCommand } from "./command";
+import { SeedCommand } from "./commands/seed.command";
+import { AppSeed } from "./commands/seeds/apps.seed";
+import { TagSeed } from "./commands/seeds/tag.seed";
+import { UserSeed } from "./commands/seeds/user.seed";
 import { appConstant } from "./constant";
 import { TagsModule } from "./tags/tags.module";
-import { UserCommand } from "./users/command/users.command";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -31,14 +32,15 @@ import { UsersModule } from "./users/users.module";
     ],
     controllers: [AppController],
     providers: [
+        AppSeed,
         AppService,
         {
             provide: APP_GUARD,
             useClass: ThrottlerGuard,
         },
-        UserCommand,
-        AppCommand,
         SeedCommand,
+        TagSeed,
+        UserSeed,
     ],
 })
 export class AppModule {}
