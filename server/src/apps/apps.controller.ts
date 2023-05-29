@@ -7,12 +7,15 @@ import {
     Patch,
     Post,
     Req,
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { IsManagerParamsGuard } from "./guards/is-manager-params.guard";
+import { IsOwnerGuard } from "./guards/is-owner.guard";
 
 @ApiTags("apps")
 @Controller("apps")
@@ -21,16 +24,19 @@ export class AppsController {
 
     // User management
     @Get("users/:appId")
+    @UseGuards(IsManagerParamsGuard)
     getAppUsers(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.appsService.getUsersforApp(appId);
     }
 
     @Post("users")
+    @UseGuards(IsOwnerGuard)
     appUserToApp(@Body() body: LinkUserWithAppDto) {
         return this.appsService.addUserToApp(body);
     }
 
     @Delete("users")
+    @UseGuards(IsOwnerGuard)
     removeUserFromApp(@Body() body: LinkUserWithAppDto) {
         return this.appsService.removeUserFromApp(body);
     }

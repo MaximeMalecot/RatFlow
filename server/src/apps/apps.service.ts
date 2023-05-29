@@ -131,6 +131,10 @@ export class AppsService {
             if (!user) throw new NotFoundException("User not found");
             const app = await this.appModel.findById(appId);
             if (!app) throw new NotFoundException("App not found");
+            if (app.owner == userId)
+                throw new BadRequestException(
+                    "User is already owner of this app"
+                );
             if (app.users.includes(userId))
                 throw new BadRequestException("User is already in this app");
             const updating = await this.appModel.updateOne(

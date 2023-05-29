@@ -78,7 +78,6 @@ export class TagsService {
     async remove(id: string) {
         try {
             const tag = await this.tagModel.deleteOne({ _id: id });
-            console.log(tag);
             if (tag.deletedCount === 0) {
                 throw new NotFoundException("Tag not deleted");
             }
