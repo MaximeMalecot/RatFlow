@@ -4,20 +4,44 @@ import {
     Delete,
     Get,
     Param,
-    ParseUUIDPipe,
     Patch,
     Post,
     Req,
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
+import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { IsManagerParamsGuard } from "./guards/is-manager-params.guard";
+import { IsOwnerGuard } from "./guards/is-owner.guard";
 
 @ApiTags("apps")
 @Controller("apps")
 export class AppsController {
     constructor(private readonly appsService: AppsService) {}
+
+    // User management
+    @Get("users/:appId")
+    @UseGuards(IsManagerParamsGuard)
+    getAppUsers(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.appsService.getUsersforApp(appId);
+    }
+
+    @Post("users")
+    @UseGuards(IsOwnerGuard)
+    appUserToApp(@Body() body: LinkUserWithAppDto) {
+        return this.appsService.addUserToApp(body);
+    }
+
+    @Delete("users")
+    @UseGuards(IsOwnerGuard)
+    removeUserFromApp(@Body() body: LinkUserWithAppDto) {
+        return this.appsService.removeUserFromApp(body);
+    }
+
+    // Apps
 
     @Get("")
     getApps() {
@@ -37,15 +61,6 @@ export class AppsController {
     @Post("")
     createApp(@Body() createAppDto: CreateAppDto, @Req() req: any) {
         return this.appsService.createApp(createAppDto, req.user.id);
-    }
-
-    @Patch(":appId/addUser/:appSecret")
-    addUserToApp(
-        @Param("appId", ParseObjectIdPipe) appId: string,
-        @Param("appSecret", ParseUUIDPipe) appSecret: string,
-        @Req() req: any
-    ) {
-        return this.appsService.addUserToApp(appId, appSecret, req.user.id);
     }
 
     @Patch(":id")
