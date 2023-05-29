@@ -9,6 +9,7 @@ import { compareSync, hash } from "bcrypt";
 import { MongoError } from "mongodb";
 import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UnrestrictedCreateUserDto } from "./dto/unrestricted-create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./schemas/user.schema";
 
@@ -91,5 +92,24 @@ export class UsersService {
         }
         await this.userModel.deleteOne({ _id: id });
         return null;
+    }
+
+    async unrestrictedCreate(createUserDto: UnrestrictedCreateUserDto) {
+        try {
+            createUserDto.password = await hash(createUserDto.password, 10);
+            const res = new this.userModel(createUserDto);
+            return await res.save();
+        } catch (error) {
+            if (error instanceof MongoError) {
+                if (error.code === 11000) {
+                    throw new BadRequestException("email already used");
+                }
+            }
+            throw new InternalServerErrorException(error.message);
+        }
+    }
+
+    async clear() {
+        await this.userModel.deleteMany({});
     }
 }
