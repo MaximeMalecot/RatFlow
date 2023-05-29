@@ -4,15 +4,14 @@ import {
     Delete,
     Get,
     Param,
-    ParseUUIDPipe,
     Patch,
     Req,
-    UseGuards
+    UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/auth/decorators/roles.decorator";
-import { Role } from "src/auth/enums/role.enum";
-import { HidePassword } from "./decorators/users.decorator";
+import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
+import { Role } from "src/users/schemas/user.schema";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { OwnUserGuards } from "./guards/users.guard";
 import { UsersService } from "./users.service";
@@ -24,13 +23,11 @@ export class UsersController {
 
     @Roles(Role.ADMIN)
     @Get()
-    @HidePassword
     findAll() {
         return this.usersService.findAll();
     }
 
     @Get("self")
-    @HidePassword
     findSelf(@Req() req: any) {
         if (!req.user) throw new Error("User not found");
         return this.usersService.findOne(req.user.id);
@@ -38,20 +35,21 @@ export class UsersController {
 
     @UseGuards(OwnUserGuards)
     @Get(":id")
-    @HidePassword
-    findOne(@Param("id", ParseUUIDPipe) id: string) {
+    findOne(@Param("id", ParseObjectIdPipe) id: string) {
         return this.usersService.findOne(id);
     }
+
     @Patch(":id")
     update(
-        @Param("id", ParseUUIDPipe) id: string,
+        @Param("id", ParseObjectIdPipe) id: string,
         @Body() updateUserDto: UpdateUserDto
     ) {
         return this.usersService.update(id, updateUserDto);
     }
 
+    @UseGuards(OwnUserGuards)
     @Delete(":id")
-    remove(@Param("id", ParseUUIDPipe) id: string) {
+    remove(@Param("id", ParseObjectIdPipe) id: string) {
         return this.usersService.remove(id);
     }
 }

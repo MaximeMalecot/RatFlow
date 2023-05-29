@@ -5,7 +5,7 @@ import {
     NotFoundException,
     UnauthorizedException,
 } from "@nestjs/common";
-import { Role } from "src/auth/enums/role.enum";
+import { Role } from "../schemas/user.schema";
 import { UsersService } from "../users.service";
 
 @Injectable()
@@ -20,6 +20,9 @@ export class OwnUserGuards implements CanActivate {
         if (!requestedUser) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
-        return requestedUser.id === user.id || user.roles.includes(Role.ADMIN);
+        return (
+            requestedUser._id.equals(user._id) ||
+            user.roles.includes(Role.ADMIN)
+        );
     }
 }

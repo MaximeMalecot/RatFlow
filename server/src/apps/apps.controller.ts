@@ -10,6 +10,7 @@ import {
     Req,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 
@@ -29,7 +30,7 @@ export class AppsController {
     }
 
     @Get(":id")
-    getApp(@Param("id", ParseUUIDPipe) id: string) {
+    getApp(@Param("id", ParseObjectIdPipe) id: string) {
         return this.appsService.getApp(id);
     }
 
@@ -38,18 +39,22 @@ export class AppsController {
         return this.appsService.createApp(createAppDto, req.user.id);
     }
 
-    @Patch(":id/addUser")
-    addUserToApp(@Param("id", ParseUUIDPipe) id: string) {
-        return this.appsService.addUserToApp(id);
+    @Patch(":appId/addUser/:appSecret")
+    addUserToApp(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Param("appSecret", ParseUUIDPipe) appSecret: string,
+        @Req() req: any
+    ) {
+        return this.appsService.addUserToApp(appId, appSecret, req.user.id);
     }
 
     @Patch(":id")
-    updateApp(@Param("id", ParseUUIDPipe) id: string) {
+    updateApp(@Param("id", ParseObjectIdPipe) id: string) {
         return this.appsService.updateApp(id);
     }
 
     @Delete(":id")
-    deleteApp(@Param("id", ParseUUIDPipe) id: string) {
+    deleteApp(@Param("id", ParseObjectIdPipe) id: string) {
         return this.appsService.deleteApp(id);
     }
 }
