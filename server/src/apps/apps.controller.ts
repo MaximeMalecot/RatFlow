@@ -13,7 +13,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
-import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { IsManagerParamsGuard } from "./guards/is-manager-params.guard";
 import { IsOwnerGuard } from "./guards/is-owner.guard";
 
@@ -31,13 +31,13 @@ export class AppsController {
 
     @Post("users")
     @UseGuards(IsOwnerGuard)
-    appUserToApp(@Body() body: LinkUserWithAppDto) {
+    appUserToApp(@Body() body: LinkMailWithAppDto) {
         return this.appsService.addUserToApp(body);
     }
 
     @Delete("users")
     @UseGuards(IsOwnerGuard)
-    removeUserFromApp(@Body() body: LinkUserWithAppDto) {
+    removeUserFromApp(@Body() body: LinkMailWithAppDto) {
         return this.appsService.removeUserFromApp(body);
     }
 

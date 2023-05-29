@@ -23,7 +23,7 @@ export class IsOwnerGuard implements CanActivate {
         });
 
         if (!isOwner)
-            throw new UnauthorizedException("User is not owner of app");
+            throw new UnauthorizedException("Current user is not owner of app");
 
         return true;
     }

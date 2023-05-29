@@ -9,6 +9,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
+import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
 import { App } from "./schema/app.schema";
 
@@ -84,7 +85,7 @@ export class AppsService {
     async clear() {
         await this.appModel.deleteMany({});
     }
-  
+
     // async addUserToApp(id: string, appSecret: string, userId: string) {
     //     const app = await this.appModel.findById(id);
     //     if (!app) {
@@ -117,13 +118,15 @@ export class AppsService {
         }
     }
 
-    async removeUserFromApp({ appId, userId }: LinkUserWithAppDto) {
+    async removeUserFromApp({ appId, email }: LinkMailWithAppDto) {
         try {
             const app = await this.appModel.findById(appId);
             if (!app) throw new NotFoundException("App not found");
+            const user = await this.userService.findOneByEmail(email);
+            if (!user) throw new NotFoundException("User not found");
             const updating = await this.appModel.updateOne(
                 { _id: appId },
-                { $pull: { users: userId } }
+                { $pull: { users: user.id } }
             );
             return { success: updating.modifiedCount > 0 };
         } catch (e) {
@@ -133,10 +136,11 @@ export class AppsService {
         }
     }
 
-    async addUserToApp({ appId, userId }: LinkUserWithAppDto) {
+    async addUserToApp({ appId, email }: LinkMailWithAppDto) {
         try {
-            const user = await this.userService.findOne(userId);
-            if (!user) throw new NotFoundException("User not found");
+            const user = await this.userService.findOneByEmail(email);
+            if (!user) throw new Error("User not found");
+            const userId = user.id;
             const app = await this.appModel.findById(appId);
             if (!app) throw new NotFoundException("App not found");
             if (app.owner == userId)
@@ -145,15 +149,18 @@ export class AppsService {
                 );
             if (app.users.includes(userId))
                 throw new BadRequestException("User is already in this app");
-            const updating = await this.appModel.updateOne(
+            await this.appModel.updateOne(
                 { _id: appId },
                 { $push: { users: userId } }
             );
-            return { success: updating.modifiedCount > 0 };
         } catch (e) {
-            if (e instanceof HttpException) throw e;
-
-            throw new InternalServerErrorException(e.message);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+        } finally {
+            return {
+                message: "If the user exists, he will be added to your app",
+            };
         }
     }
 
