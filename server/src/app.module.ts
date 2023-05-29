@@ -7,10 +7,12 @@ import { AnalyticsModule } from "./analytics/analytics.module";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AppsModule } from "./apps/apps.module";
+import { AppCommand } from "./apps/command/apps.command";
 import { AuthModule } from "./auth/auth.module";
+import { SeedCommand } from "./command";
 import { appConstant } from "./constant";
-import { UserCommand } from "./users/users.command";
 import { TagsModule } from "./tags/tags.module";
+import { UserCommand } from "./users/command/users.command";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -35,6 +37,8 @@ import { UsersModule } from "./users/users.module";
             useClass: ThrottlerGuard,
         },
         UserCommand,
+        AppCommand,
+        SeedCommand,
     ],
 })
 export class AppModule {}

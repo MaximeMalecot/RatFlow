@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    Req,
+    UseGuards,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { AnalyticsGuard } from "./guards/analytics.guard";
@@ -15,8 +24,8 @@ export class AnalyticsController {
         return this.analyticsService.create(createAnalyticsDto, req.app.id);
     }
 
-    @Get()
-    findAll() {
-        return this.analyticsService.findAll();
+    @Get(":appId")
+    findAll(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.findAll(appId);
     }
 }

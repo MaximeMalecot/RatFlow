@@ -88,4 +88,8 @@ export class AppsService {
         const app = await this.appModel.findById(id);
         return app.origins;
     }
+
+    async clear() {
+        await this.appModel.deleteMany({});
+    }
 }

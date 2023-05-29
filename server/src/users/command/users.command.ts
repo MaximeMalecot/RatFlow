@@ -1,14 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { hash } from "bcrypt";
 import { Command } from "nestjs-command";
-import { UsersService } from "./users.service";
+import { UsersService } from "../users.service";
 
 @Injectable()
 export class UserCommand {
     constructor(private readonly usersService: UsersService) {}
 
     @Command({
-        command: "db:seed",
+        command: "user:seed",
         describe: "create users",
     })
     async seed() {

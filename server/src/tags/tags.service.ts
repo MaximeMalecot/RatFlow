@@ -91,4 +91,8 @@ export class TagsService {
             throw new InternalServerErrorException(e.message);
         }
     }
+
+    async clear() {
+        await this.tagModel.deleteMany({});
+    }
 }
