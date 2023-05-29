@@ -8,8 +8,11 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AppsModule } from "./apps/apps.module";
 import { AuthModule } from "./auth/auth.module";
+import { SeedCommand } from "./commands/seed.command";
+import { AppSeed } from "./commands/seeds/apps.seed";
+import { TagSeed } from "./commands/seeds/tag.seed";
+import { UserSeed } from "./commands/seeds/user.seed";
 import { appConstant } from "./constant";
-import { UserCommand } from "./users/users.command";
 import { TagsModule } from "./tags/tags.module";
 import { UsersModule } from "./users/users.module";
 
@@ -29,12 +32,15 @@ import { UsersModule } from "./users/users.module";
     ],
     controllers: [AppController],
     providers: [
+        AppSeed,
         AppService,
         {
             provide: APP_GUARD,
             useClass: ThrottlerGuard,
         },
-        UserCommand,
+        SeedCommand,
+        TagSeed,
+        UserSeed,
     ],
 })
 export class AppModule {}

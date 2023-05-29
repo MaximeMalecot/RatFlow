@@ -77,6 +77,14 @@ export class AppsService {
         return app.origins;
     }
 
+    async findAll() {
+        return this.appModel.find({});
+    }
+
+    async clear() {
+        await this.appModel.deleteMany({});
+    }
+  
     // async addUserToApp(id: string, appSecret: string, userId: string) {
     //     const app = await this.appModel.findById(id);
     //     if (!app) {
