@@ -8,7 +8,9 @@ import { AppService } from "./app.service";
 import { AppsModule } from "./apps/apps.module";
 import { AuthModule } from "./auth/auth.module";
 import { appConstant } from "./constant";
+import { TagsModule } from "./tags/tags.module";
 import { UsersModule } from "./users/users.module";
+
 @Module({
     imports: [
         AnalyticsModule,
@@ -19,7 +21,7 @@ import { UsersModule } from "./users/users.module";
             ttl: 60,
             limit: 15,
         }),
-        // TagsModule,
+        TagsModule,
         UsersModule,
     ],
     controllers: [AppController],
