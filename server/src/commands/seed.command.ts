@@ -17,7 +17,6 @@ export class SeedCommand {
         describe: "seed",
     })
     async seed() {
-        console.log("ULTIMATE");
         await this.userSeeder.seed();
         await this.appSeeder.seed();
         await this.tagSeeder.seed();
