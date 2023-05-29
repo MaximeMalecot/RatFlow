@@ -4,43 +4,39 @@ import {
     InternalServerErrorException,
     NotFoundException,
 } from "@nestjs/common";
-import { Prisma, User } from "@prisma/client";
+import { InjectModel } from "@nestjs/mongoose";
 import { compareSync, hash } from "bcrypt";
-import { PrismaService } from "../prisma.service";
+import { MongoError } from "mongodb";
+import { Model } from "mongoose";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { User } from "./schemas/user.schema";
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService) {}
+    constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
     async create(createUserDto: CreateUserDto) {
         try {
             createUserDto.password = await hash(createUserDto.password, 10);
-            const res = await this.prisma.user.create({
-                data: createUserDto,
-            });
-            return res;
+            const res = new this.userModel(createUserDto);
+            return await res.save();
         } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2002") {
-                    throw new BadRequestException(
-                        `email already used`
-                    );
+            if (error instanceof MongoError) {
+                if (error.code === 11000) {
+                    throw new BadRequestException("email already used");
                 }
             }
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(error.message);
         }
     }
 
     findAll(): Promise<User[] | null> {
-        return this.prisma.user.findMany();
+        return this.userModel.find().exec();
     }
 
     async findOne(id: string) {
-        const user = await this.prisma.user.findUnique({
-            where: { id: id },
-        });
+        const user = await this.userModel.findOne({ _id: id });
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
@@ -48,9 +44,12 @@ export class UsersService {
     }
 
     async findOneByEmail(email: string) {
-        const user = await this.prisma.user.findUnique({
-            where: { email: email },
-        });
+        const user = await this.userModel
+            .findOne({
+                email: email,
+            })
+            .select("+password")
+            .exec();
         if (!user) {
             throw new NotFoundException(`User with email ${email} not found`);
         }
@@ -62,10 +61,10 @@ export class UsersService {
             throw new BadRequestException("Old password is required");
         }
         if (updateUserDto.oldPassword) {
-            let user = await this.prisma.user.findUnique({
-                where: { id: id },
-                select: { password: true },
-            });
+            let user = await this.userModel
+                .findById(id)
+                .select("+password")
+                .exec();
             if (!user) {
                 throw new NotFoundException(`User with id ${id} not found`);
             }
@@ -78,31 +77,19 @@ export class UsersService {
             updateUserDto.password = await hash(updateUserDto.password, 10);
         }
         try {
-            const user = await this.prisma.user.update({
-                where: { id: id },
-                data: updateUserDto,
-            });
-            return user;
+            await this.userModel.updateOne({ _id: id }, updateUserDto);
+            return;
         } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === "P2025") {
-                    throw new NotFoundException(`User with id ${id} not found`);
-                }
-            }
             throw new InternalServerErrorException();
         }
     }
 
     async remove(id: string) {
-        let user = await this.prisma.user.findUnique({
-            where: { id: id },
-        });
+        let user = await this.userModel.findById(id);
         if (!user) {
             throw new NotFoundException(`User with id ${id} not found`);
         }
-        await this.prisma.user.delete({
-            where: { id: id },
-        });
+        await this.userModel.deleteOne({ _id: id });
         return null;
     }
 }

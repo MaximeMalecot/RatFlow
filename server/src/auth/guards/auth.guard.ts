@@ -47,6 +47,9 @@ export class AuthGuard implements CanActivate {
             request["user"] = user;
         } catch (err) {
             if (err instanceof HttpException) {
+                if (err instanceof NotFoundException) {
+                    throw new UnauthorizedException("Account deleted");
+                }
                 throw err;
             }
             throw new UnauthorizedException("Invalid token");
