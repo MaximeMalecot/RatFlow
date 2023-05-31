@@ -10,7 +10,9 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Roles } from "src/auth/decorators/roles.decorator";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
+import { Role } from "src/users/schemas/user.schema";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
@@ -43,6 +45,7 @@ export class AppsController {
 
     // Apps
 
+    @Roles(Role.ADMIN)
     @Get("")
     getApps() {
         return this.appsService.getApps();

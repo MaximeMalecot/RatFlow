@@ -21,7 +21,7 @@ export class AppsService {
     ) {}
 
     async getApps() {
-        return [];
+        return this.appModel.find({});
     }
 
     async getSelfApps(userId: string) {

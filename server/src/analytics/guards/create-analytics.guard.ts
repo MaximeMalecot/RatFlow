@@ -7,7 +7,7 @@ import {
 import { AppsService } from "src/apps/apps.service";
 
 @Injectable()
-export class AnalyticsGuard implements CanActivate {
+export class CreateAnalyticsGuard implements CanActivate {
     constructor(private appsService: AppsService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
