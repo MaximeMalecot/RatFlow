@@ -71,7 +71,7 @@ export class AnalyticSeed {
                 let data = {
                     clientId: session.clientId,
                     sessionId: session.sessionId,
-                    eventName: "click",
+                    eventName: "page_changed",
                     url: faker.helpers.arrayElement(urls),
                     userAgent: session.userAgent,
                     date: faker.date
@@ -102,36 +102,5 @@ export class AnalyticSeed {
             let analytic = await this.analyticsService.create(endData, app.id);
             console.log(`Created analytic with id: ${analytic.id}`);
         }
-        // for (let tag of tags) {
-        //     for (
-        //         let i = 0;
-        //         i <
-        //         faker.number.int({
-        //             min: 2,
-        //             max: 10,
-        //         });
-        //         i++
-        //     ) {
-        //         const data = {
-        //             appId: app.id,
-        //             eventName: "click",
-        //             url: "ahouioui",
-        //             date: faker.date
-        //                 .between({
-        //                     from: "2023-05-20T00:00:00.000Z",
-        //                     to: "2023-05-30T00:00:00.000Z",
-        //                 })
-        //                 .toString(),
-        //             service: "front",
-        //             clientId: "monclient",
-        //             tagId: tag.id,
-        //         };
-        //         const analytic = await this.analyticsService.create(
-        //             data,
-        //             app.id
-        //         );
-        //         console.log(`Created analytic with id: ${analytic.id}`);
-        //     }
-        // }
     }
 }
