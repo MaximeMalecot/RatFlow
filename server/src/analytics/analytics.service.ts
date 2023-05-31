@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { AppsService } from "src/apps/apps.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
+import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { Analytic } from "./schema/analytic.schema";
 
 @Injectable()
@@ -26,6 +27,24 @@ export class AnalyticsService {
                 throw new NotFoundException("App not found");
             }
             return await this.analyticModel.find();
+        } catch (err) {
+            console.log(err);
+            if (err instanceof HttpException) {
+                throw err;
+            }
+            return null;
+        }
+    }
+
+    async findAllFiltered(appId: string, filters: GetAnalyticsDto) {
+        try {
+            const app = this.appsService.getApp(appId);
+            if (!app) {
+                throw new NotFoundException("App not found");
+            }
+            return await this.analyticModel.find({
+                ...filters,
+            });
         } catch (err) {
             console.log(err);
             if (err instanceof HttpException) {
