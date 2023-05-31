@@ -53,4 +53,8 @@ export class AnalyticsService {
             return null;
         }
     }
+
+    async clear() {
+        return await this.analyticModel.deleteMany({});
+    }
 }

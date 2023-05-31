@@ -14,5 +14,6 @@ import { Analytic, AnalyticSchema } from "./schema/analytic.schema";
     ],
     controllers: [AnalyticsController],
     providers: [AnalyticsService],
+    exports: [AnalyticsService],
 })
 export class AnalyticsModule {}
