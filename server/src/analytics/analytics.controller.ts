@@ -15,6 +15,7 @@ import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
+import { GetSessionStatsDto } from "./dto/get-sessions-stats.dto";
 import { CreateAnalyticsGuard } from "./guards/create-analytics.guard";
 import { GetAnalyticsGuard } from "./guards/get-analytics.guard";
 
@@ -46,7 +47,6 @@ export class AnalyticsController {
         @Query() query: GetAnalyticsDto,
         @Query() paginate: PaginationDto
     ) {
-        console.log(query);
         return this.analyticsService.findAllFiltered(appId, query, paginate);
     }
 
@@ -62,5 +62,23 @@ export class AnalyticsController {
     @Get(":appId/pagePerSessionAvg")
     getAvgPagePerSession(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.analyticsService.getAvgPageBySession(appId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/sessionPerPeriod")
+    getAvgSessionForPeriod(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query("scale") scale: "day" | "month" | "year" = "day"
+    ) {
+        return this.analyticsService.getAvgSessionByTimeScale(appId, scale);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/sessionStatsForMonth")
+    getSessionsStatsForMonth(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query() data: GetSessionStatsDto
+    ) {
+        return this.analyticsService.getSessionsStatsForMonth(appId, data.date);
     }
 }

@@ -110,7 +110,10 @@ export class AnalyticsService {
                 },
             },
         ]);
-        return res[0].avgDuration;
+        return {
+            value: res[0].avgDuration,
+            unit: "minute",
+        };
     }
 
     async getAvgPageBySession(appId: string) {
@@ -125,11 +128,138 @@ export class AnalyticsService {
                     eventName: "page_changed",
                 },
             },
+            {
+                $group: {
+                    _id: "$sessionId",
+                    count: {
+                        $sum: 1,
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgPages: {
+                        $avg: "$count",
+                    },
+                },
+            },
         ]);
-        return res;
+        return {
+            value: res[0].avgPages,
+            unit: "pages",
+        };
     }
 
-    async getAvgSessionByTime(appId: string, time: string) {}
+    async getAvgSessionByTimeScale(
+        appId: string,
+        scale: "day" | "month" | "year"
+    ) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        let scalePipe = {};
+        switch (scale) {
+            case "day":
+                scalePipe = {
+                    format: "%Y-%m-%d",
+                    date: "$date",
+                };
+                break;
+            case "month":
+                scalePipe = {
+                    format: "%Y-%m",
+                    date: "$date",
+                };
+                break;
+            case "year":
+                scalePipe = {
+                    format: "%Y",
+                    date: "$date",
+                };
+                break;
+        }
+        const res = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                    eventName: "session_end",
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: scalePipe,
+                    },
+                    count: { $sum: 1 }, // Utilise 1 pour compter le nombre d'objets, ou $sum: 1 si tu as un champ spécifique contenant un nombre
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgSessions: {
+                        $avg: "$count",
+                    },
+                },
+            },
+        ]);
+
+        return {
+            value: res[0].avgSessions,
+            unit: "session",
+            scale,
+        };
+    }
+
+    async getSessionsStatsForMonth(appId: string, date: Date) {
+        const getStats = async (startDate: Date, endDate: Date) => {
+            return await this.analyticModel.aggregate([
+                {
+                    $match: {
+                        appId: app.id,
+                        eventName: "session_end",
+                        date: {
+                            $gte: startDate,
+                            $lte: endDate,
+                        },
+                    },
+                },
+                {
+                    $count: "sessions",
+                },
+            ]);
+        };
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const desiredMonth = await getStats(
+            new Date(date.getFullYear(), date.getMonth(), 1),
+            new Date(date.getFullYear(), date.getMonth() + 1, 0)
+        );
+
+        const previousMonth = await getStats(
+            new Date(date.getFullYear(), date.getMonth() - 1, 1),
+            new Date(date.getFullYear(), date.getMonth(), 0)
+        );
+        const growth =
+            desiredMonth[0].sessions ?? 1 / previousMonth[0].sessions - 1 ?? 1;
+        return {
+            desiredMonth: {
+                value: desiredMonth[0].sessions,
+                unit: "session",
+            },
+            previousMonth: {
+                value: previousMonth[0].sessions,
+                unit: "session",
+            },
+            growth: {
+                value: growth,
+                unit: "%",
+            },
+        };
+    }
 
     async clear() {
         return await this.analyticModel.deleteMany({});
