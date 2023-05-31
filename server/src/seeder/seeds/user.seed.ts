@@ -1,10 +1,15 @@
 import { Injectable } from "@nestjs/common";
+import { Command } from "nestjs-command";
 import { UsersService } from "../../users/users.service";
 
 @Injectable()
 export class UserSeed {
     constructor(private readonly usersService: UsersService) {}
 
+    @Command({
+        command: "db:seed:user",
+        describe: "seed users",
+    })
     async seed() {
         console.log("SEEDING USERS -----");
         await this.usersService.clear();

@@ -6,7 +6,9 @@
     "private": true,
     "license": "UNLICENSED",
     "scripts": {
-        "seed": "npx nestjs-command db:seed",
+        "db:seed": "npx nestjs-command db:seed",
+        "db:seed:user": "npx nestjs-command db:seed:user",
+        "db:clear": "npx nestjs-command db:clear",
         "build": "nest build",
         "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
         "start": "nest start",
