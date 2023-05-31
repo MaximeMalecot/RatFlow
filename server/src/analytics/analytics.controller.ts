@@ -81,4 +81,10 @@ export class AnalyticsController {
     ) {
         return this.analyticsService.getSessionsStatsForMonth(appId, data.date);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getStatsOfCurrentYear")
+    getStatsOfCurrentYear(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getStatsOfCurrentYear(appId);
+    }
 }

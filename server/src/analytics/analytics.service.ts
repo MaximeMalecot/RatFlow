@@ -1,6 +1,6 @@
 import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { AppsService } from "src/apps/apps.service";
 import { PaginationDto } from "src/dto/pagination.dto";
 import { TagsService } from "src/tags/tags.service";
@@ -220,13 +220,13 @@ export class AnalyticsService {
         const desiredMonth = await this.getStats(
             new Date(date.getFullYear(), date.getMonth(), 1),
             new Date(date.getFullYear(), date.getMonth() + 1, 0),
-            appId
+            app.id
         );
 
         const previousMonth = await this.getStats(
             new Date(date.getFullYear(), date.getMonth() - 1, 1),
             new Date(date.getFullYear(), date.getMonth(), 0),
-            appId
+            app.id
         );
         const growth =
             desiredMonth[0].sessions ?? 1 / previousMonth[0].sessions - 1 ?? 1;
@@ -253,15 +253,15 @@ export class AnalyticsService {
         }
         const currentYear = new Date().getFullYear();
         const months = await Promise.all(
-            Array.from(Array(11).keys()).map(async (month) => {
+            Array.from(Array(12).keys()).map(async (month) => {
                 let stat = await this.getStats(
                     new Date(currentYear, month, 1),
                     new Date(currentYear, month + 1, 0),
-                    appId
+                    app.id
                 );
                 return {
-                    month: new Date(currentYear, month, 1).toLocaleString(),
-                    value: stat[0].sessions,
+                    date: new Date(currentYear, month, 1).toISOString(),
+                    value: stat?.[0]?.sessions ?? 0,
                 };
             })
         );
@@ -272,7 +272,11 @@ export class AnalyticsService {
         return await this.analyticModel.deleteMany({});
     }
 
-    private async getStats(startDate: Date, endDate: Date, appId: string) {
+    private async getStats(
+        startDate: Date,
+        endDate: Date,
+        appId: mongoose.Types.ObjectId
+    ) {
         return await this.analyticModel.aggregate([
             {
                 $match: {
