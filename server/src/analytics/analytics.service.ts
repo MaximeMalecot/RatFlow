@@ -75,9 +75,59 @@ export class AnalyticsService {
         }
     }
 
-    async getAvgSessionDuration(appId: string) {}
+    async getAvgSessionDuration(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const res = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                    eventName: "session_end",
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    duration: {
+                        $avg: {
+                            $dateDiff: {
+                                startDate: "$customData.sessionStart",
+                                endDate: "$customData.sessionEnd",
+                                unit: "minute",
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgDuration: {
+                        $avg: "$duration",
+                    },
+                },
+            },
+        ]);
+        return res[0].avgDuration;
+    }
 
-    async getAvgPageBySession(appId: string) {}
+    async getAvgPageBySession(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const res = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                    eventName: "page_changed",
+                },
+            },
+        ]);
+        return res;
+    }
 
     async getAvgSessionByTime(appId: string, time: string) {}
 

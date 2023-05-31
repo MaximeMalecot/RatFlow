@@ -49,4 +49,18 @@ export class AnalyticsController {
         console.log(query);
         return this.analyticsService.findAllFiltered(appId, query, paginate);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/sessionDurationAvg")
+    getAvgSessionDurationForApp(
+        @Param("appId", ParseObjectIdPipe) appId: string
+    ) {
+        return this.analyticsService.getAvgSessionDuration(appId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/pagePerSessionAvg")
+    getAvgPagePerSession(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getAvgPageBySession(appId);
+    }
 }
