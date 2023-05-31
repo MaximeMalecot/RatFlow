@@ -82,6 +82,10 @@ export class AppsService {
         return this.appModel.find({});
     }
 
+    async findAppForNameAndUser(name: string, userId: string) {
+        return this.appModel.findOne({ name, owner: userId });
+    }
+
     async clear() {
         await this.appModel.deleteMany({});
     }

@@ -2,7 +2,8 @@ import { IsDateString, IsObject, IsOptional, IsString } from "class-validator";
 
 export class CreateAnalyticsDto {
     @IsString()
-    public appId: string;
+    @IsOptional()
+    public appId?: string;
     @IsString()
     @IsOptional()
     public clientId?: string;
@@ -26,7 +27,7 @@ export class CreateAnalyticsDto {
     public date: string;
     @IsObject()
     @IsOptional()
-    public customData?: string;
+    public customData?: Object;
     @IsString()
     @IsOptional()
     public tagId?: string;

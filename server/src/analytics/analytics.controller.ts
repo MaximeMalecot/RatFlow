@@ -9,6 +9,7 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { PaginationDto } from "src/dto/pagination.dto";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
@@ -29,17 +30,21 @@ export class AnalyticsController {
 
     @UseGuards(GetAnalyticsGuard)
     @Get(":appId")
-    findAll(@Param("appId", ParseObjectIdPipe) appId: string) {
-        return this.analyticsService.findAll(appId);
+    findAll(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query() paginate: PaginationDto
+    ) {
+        return this.analyticsService.findAll(appId, paginate);
     }
 
     @UseGuards(GetAnalyticsGuard)
     @Get(":appId/filter")
     findAllQuery(
         @Param("appId", ParseObjectIdPipe) appId: string,
-        @Query() query: GetAnalyticsDto
+        @Query() query: GetAnalyticsDto,
+        @Query() paginate: PaginationDto
     ) {
         console.log(query);
-        return this.analyticsService.findAllFiltered(appId, query);
+        return this.analyticsService.findAllFiltered(appId, query, paginate);
     }
 }

@@ -22,5 +22,14 @@ export class AppSeed {
             );
             console.log(`Created app with id: ${app.id}`);
         }
+
+        let testUser = await this.usersService.findOneByEmail("user@user.com");
+        const app = await this.appsService.createApp(
+            {
+                name: "Test app",
+            },
+            testUser.id
+        );
+        console.log(`Created app with id: ${app.id}`);
     }
 }
