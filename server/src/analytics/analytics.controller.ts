@@ -9,6 +9,7 @@ import {
     UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { Public } from "src/auth/decorators/public.decator";
 import { PaginationDto } from "src/dto/pagination.dto";
 import { ParseObjectIdPipe } from "src/pipes/objectid.pipe";
 import { AnalyticsService } from "./analytics.service";
@@ -22,6 +23,7 @@ import { GetAnalyticsGuard } from "./guards/get-analytics.guard";
 export class AnalyticsController {
     constructor(private readonly analyticsService: AnalyticsService) {}
 
+    @Public()
     @UseGuards(CreateAnalyticsGuard)
     @Post()
     create(@Body() createAnalyticsDto: CreateAnalyticsDto, @Req() req: any) {

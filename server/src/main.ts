@@ -1,12 +1,13 @@
 import { ValidationPipe } from "@nestjs/common";
-import { NestFactory } from '@nestjs/core';
+import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { AppModule } from './app.module';
+import helmet from "helmet";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-      if (process.env.NODE_ENV !== "prod") {
+    const app = await NestFactory.create(AppModule);
+    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+    if (process.env.NODE_ENV !== "prod") {
         const config = new DocumentBuilder()
             .setTitle(process.env.npm_package_name ?? "API")
             .setDescription(
@@ -17,6 +18,11 @@ async function bootstrap() {
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup("api", app, document);
     }
-  await app.listen(3000);
+    app.enableCors({
+        origin: process.env.CORS_ORIGIN ?? "*",
+    });
+    app.use(helmet());
+
+    await app.listen(3000);
 }
 bootstrap();
