@@ -213,35 +213,20 @@ export class AnalyticsService {
     }
 
     async getSessionsStatsForMonth(appId: string, date: Date) {
-        const getStats = async (startDate: Date, endDate: Date) => {
-            return await this.analyticModel.aggregate([
-                {
-                    $match: {
-                        appId: app.id,
-                        eventName: "session_end",
-                        date: {
-                            $gte: startDate,
-                            $lte: endDate,
-                        },
-                    },
-                },
-                {
-                    $count: "sessions",
-                },
-            ]);
-        };
         const app = await this.appsService.getApp(appId);
         if (!app) {
             throw new NotFoundException("App not found");
         }
-        const desiredMonth = await getStats(
+        const desiredMonth = await this.getStats(
             new Date(date.getFullYear(), date.getMonth(), 1),
-            new Date(date.getFullYear(), date.getMonth() + 1, 0)
+            new Date(date.getFullYear(), date.getMonth() + 1, 0),
+            appId
         );
 
-        const previousMonth = await getStats(
+        const previousMonth = await this.getStats(
             new Date(date.getFullYear(), date.getMonth() - 1, 1),
-            new Date(date.getFullYear(), date.getMonth(), 0)
+            new Date(date.getFullYear(), date.getMonth(), 0),
+            appId
         );
         const growth =
             desiredMonth[0].sessions ?? 1 / previousMonth[0].sessions - 1 ?? 1;
@@ -261,7 +246,47 @@ export class AnalyticsService {
         };
     }
 
+    async getStatsOfCurrentYear(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const currentYear = new Date().getFullYear();
+        const months = await Promise.all(
+            Array.from(Array(11).keys()).map(async (month) => {
+                let stat = await this.getStats(
+                    new Date(currentYear, month, 1),
+                    new Date(currentYear, month + 1, 0),
+                    appId
+                );
+                return {
+                    month: new Date(currentYear, month, 1).toLocaleString(),
+                    value: stat[0].sessions,
+                };
+            })
+        );
+        return months;
+    }
+
     async clear() {
         return await this.analyticModel.deleteMany({});
+    }
+
+    private async getStats(startDate: Date, endDate: Date, appId: string) {
+        return await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId,
+                    eventName: "session_end",
+                    date: {
+                        $gte: startDate,
+                        $lte: endDate,
+                    },
+                },
+            },
+            {
+                $count: "sessions",
+            },
+        ]);
     }
 }
