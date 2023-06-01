@@ -79,9 +79,9 @@ export class AppsService {
         if (!app) {
             throw new BadRequestException("App not found");
         }
-        await this.appModel.deleteOne({ _id: id });
-        await this.tagsService.removeAllTagsByAppId(id);
         await this.analtycsService.removeAllAnalyticsByAppId(id);
+        await this.tagsService.removeAllTagsByAppId(id);
+        await this.appModel.deleteOne({ _id: id });
         return null;
     }
 
