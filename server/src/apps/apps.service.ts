@@ -15,6 +15,7 @@ import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { UpdateAppDto } from "./dto/update-app.dto";
 import { App } from "./schema/app.schema";
 
 
@@ -69,9 +70,22 @@ export class AppsService {
         }
     }
 
-    async updateApp(id: string) {
-        return {};
+    async updateApp(id: string, updateAppDto: UpdateAppDto){
+        try {
+            const app = await this.appModel.findById(id);
+            if (!app) {
+                throw new NotFoundException('App not found');
+            }
+            await this.appModel.updateOne({ _id: id }, updateAppDto);
+            return;
+        } catch (err) {
+            if (err instanceof HttpException) {
+                throw err;
+            }
+            throw new InternalServerErrorException(err.message);
+        }
     }
+
 
     async deleteApp(id: string) {
         console.log(id);
