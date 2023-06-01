@@ -106,4 +106,13 @@ export class AnalyticsController {
     ) {
         return this.analyticsService.getPageView(appId, data);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getClientsPerPeriod")
+    getAvgClientByTimeScale(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query("scale") scale: "day" | "month" | "year" = "day"
+    ) {
+        return this.analyticsService.getAvgClientByTimeScale(appId, scale);
+    }
 }

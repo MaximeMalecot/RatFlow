@@ -23,7 +23,7 @@ export class AnalyticSeed {
         );
         const tags = await this.tagsService.findAllByAppId(app.id);
         const cliendIds = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             cliendIds.push(faker.string.uuid());
         }
         const urls = ["/", "/about", "/contact", "/register", "/login"];
