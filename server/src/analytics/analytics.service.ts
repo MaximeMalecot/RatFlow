@@ -1,4 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
 import { AppsService } from "src/apps/apps.service";
@@ -6,6 +11,7 @@ import { PaginationDto } from "src/dto/pagination.dto";
 import { TagsService } from "src/tags/tags.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
+import { PageViewDto } from "./dto/page-view.dto";
 import { Analytic } from "./schema/analytic.schema";
 
 @Injectable()
@@ -55,7 +61,7 @@ export class AnalyticsService {
         paginate: PaginationDto
     ) {
         try {
-            const app = this.appsService.getApp(appId);
+            const app = await this.appsService.getApp(appId);
             if (!app) {
                 throw new NotFoundException("App not found");
             }
@@ -326,6 +332,40 @@ export class AnalyticsService {
             value: rate,
             unit: "%",
         };
+    }
+
+    async getPageView(appId: string, data: PageViewDto) {
+        try {
+            const app = await this.appsService.getApp(appId);
+            if (!app) {
+                throw new NotFoundException("App not found");
+            }
+
+            const pageView = await this.analyticModel.aggregate([
+                {
+                    $match: {
+                        appId: app.id,
+                        eventName: "page_changed",
+                        ...data,
+                    },
+                },
+                {
+                    $count: "pageView",
+                },
+            ]);
+
+            return {
+                ...data,
+                value: pageView[0]?.pageView ?? 0,
+                unit: "views",
+            };
+        } catch (err) {
+            console.log(err);
+            if (err instanceof HttpException) {
+                throw err;
+            }
+            throw new InternalServerErrorException();
+        }
     }
 
     async clear() {

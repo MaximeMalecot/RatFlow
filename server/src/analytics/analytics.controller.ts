@@ -16,6 +16,7 @@ import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { GetSessionStatsDto } from "./dto/get-sessions-stats.dto";
+import { PageViewDto } from "./dto/page-view.dto";
 import { CreateAnalyticsGuard } from "./guards/create-analytics.guard";
 import { GetAnalyticsGuard } from "./guards/get-analytics.guard";
 
@@ -95,5 +96,14 @@ export class AnalyticsController {
         @Param("tagId", ParseObjectIdPipe) tagId: string
     ) {
         return this.analyticsService.getClickThroughRate(appId, tagId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getPageView")
+    getPageView(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query() data: PageViewDto
+    ) {
+        return this.analyticsService.getPageView(appId, data);
     }
 }
