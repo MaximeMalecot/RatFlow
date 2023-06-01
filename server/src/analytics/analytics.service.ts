@@ -428,6 +428,85 @@ export class AnalyticsService {
         };
     }
 
+    async getBounceRate(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const sessionsCount = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$sessionId",
+                    events: { $addToSet: "$eventName" },
+                },
+            },
+            {
+                $count: "sessionCount",
+            },
+        ]);
+
+        const sessionsBounced = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$sessionId",
+                    events: { $addToSet: "$eventName" },
+                },
+            },
+            {
+                $match: {
+                    events: { $nin: ["page_changed"] },
+                },
+            },
+        ]);
+        const bouncedSessionIds = sessionsBounced.map((session) => session._id);
+        const urls = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    sessionId: { $in: bouncedSessionIds },
+                    eventName: "session_end",
+                },
+            },
+            {
+                $group: {
+                    _id: "$url",
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $sort: {
+                    count: -1,
+                },
+            },
+            {
+                $limit: 5,
+            },
+            {
+                $project: {
+                    _id: 0,
+                    url: "$_id",
+                    count: 1,
+                },
+            },
+        ]);
+
+        return {
+            value:
+                (sessionsBounced.length / sessionsCount[0].sessionCount) * 100,
+            unit: "%",
+            frequentlyBouncedUrl: urls,
+        };
+    }
+
     async clear() {
         return await this.analyticModel.deleteMany({});
     }
