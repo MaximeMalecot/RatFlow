@@ -79,7 +79,7 @@ export class TagsService {
     }
     async removeAllTagsByAppId(appId: string) {
         try {
-            return await this.tagModel.deleteMany({ appId : appId.toString() });
+            return await this.tagModel.deleteMany({ appId });
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;

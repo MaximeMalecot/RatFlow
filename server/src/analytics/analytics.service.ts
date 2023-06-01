@@ -1,9 +1,10 @@
-import { HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 import {
     HttpException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
+    forwardRef,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
@@ -280,6 +281,7 @@ export class AnalyticsService {
                 return {
                     date: new Date(currentYear, month, 1).toISOString(),
                     value: stat?.[0]?.sessions ?? 0,
+                    unit: "session",
                 };
             })
         );
@@ -534,9 +536,12 @@ export class AnalyticsService {
             },
         ]);
     }
-        async removeAllAnalyticsByAppId(appId: string) {
+
+    async removeAllAnalyticsByAppId(appId: string) {
         try {
-            return await this.analyticModel.deleteMany({ appId : appId.toString() });
+            return await this.analyticModel.deleteMany({
+                appId,
+            });
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;

@@ -18,7 +18,6 @@ import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
 import { UpdateAppDto } from "./dto/update-app.dto";
 import { App } from "./schema/app.schema";
 
-
 @Injectable()
 export class AppsService {
     constructor(
@@ -70,14 +69,16 @@ export class AppsService {
         }
     }
 
-    async updateApp(id: string, updateAppDto: UpdateAppDto){
+    async updateApp(id: string, updateAppDto: UpdateAppDto) {
         try {
             const app = await this.appModel.findById(id);
             if (!app) {
-                throw new NotFoundException('App not found');
+                throw new NotFoundException("App not found");
             }
             await this.appModel.updateOne({ _id: id }, updateAppDto);
-            return;
+            return {
+                message: "App updated successfully",
+            };
         } catch (err) {
             if (err instanceof HttpException) {
                 throw err;
@@ -86,9 +87,7 @@ export class AppsService {
         }
     }
 
-
     async deleteApp(id: string) {
-        console.log(id);
         const app = await this.appModel.findById(id);
         if (!app) {
             throw new BadRequestException("App not found");
