@@ -77,7 +77,7 @@ export class TagsService {
             throw new InternalServerErrorException(e.message);
         }
     }
-    async removeAllByAppId(appId: string) {
+    async removeAllTagsByAppId(appId: string) {
         try {
             return await this.tagModel.deleteMany({ appId : appId.toString() });
         } catch (e) {

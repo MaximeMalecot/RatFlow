@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
 import { AppsService } from "src/apps/apps.service";
@@ -7,12 +7,13 @@ import { TagsService } from "src/tags/tags.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { Analytic } from "./schema/analytic.schema";
-
 @Injectable()
 export class AnalyticsService {
     constructor(
         @InjectModel(Analytic.name) private analyticModel: Model<Analytic>,
+        @Inject(forwardRef(() => AppsService))
         private appsService: AppsService,
+        @Inject(forwardRef(() => TagsService))
         private tagService: TagsService
     ) {}
 
@@ -292,5 +293,15 @@ export class AnalyticsService {
                 $count: "sessions",
             },
         ]);
+    }
+        async removeAllAnalyticsByAppId(appId: string) {
+        try {
+            return await this.analyticModel.deleteMany({ appId : appId.toString() });
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
     }
 }

@@ -9,6 +9,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { AnalyticsService } from "src/analytics/analytics.service";
 import { TagsService } from "src/tags/tags.service";
 import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
@@ -23,7 +24,9 @@ export class AppsService {
         @InjectModel(App.name) private appModel: Model<App>,
         private readonly userService: UsersService,
         @Inject(forwardRef(() => TagsService))
-        private readonly tagsService: TagsService
+        private readonly tagsService: TagsService,
+        @Inject(forwardRef(() => AnalyticsService))
+        private readonly analtycsService: AnalyticsService
     ) {}
 
     async getApps() {
@@ -77,7 +80,8 @@ export class AppsService {
             throw new BadRequestException("App not found");
         }
         await this.appModel.deleteOne({ _id: id });
-        await this.tagsService.removeAllByAppId(id);
+        await this.tagsService.removeAllTagsByAppId(id);
+        await this.analtycsService.removeAllAnalyticsByAppId(id);
         return null;
     }
 
