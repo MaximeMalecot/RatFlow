@@ -87,4 +87,13 @@ export class AnalyticsController {
     getStatsOfCurrentYear(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.analyticsService.getStatsOfCurrentYear(appId);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getClickThroughRate/:tagId")
+    getClickThroughRate(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Param("tagId", ParseObjectIdPipe) tagId: string
+    ) {
+        return this.analyticsService.getClickThroughRate(appId, tagId);
+    }
 }

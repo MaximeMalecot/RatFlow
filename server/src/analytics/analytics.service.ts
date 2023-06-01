@@ -228,8 +228,18 @@ export class AnalyticsService {
             new Date(date.getFullYear(), date.getMonth(), 0),
             app.id
         );
-        const growth =
-            desiredMonth[0].sessions ?? 1 / previousMonth[0].sessions - 1 ?? 1;
+
+        const desiredMonthValue = desiredMonth[0].sessions ?? 1;
+        const previousMonthValue = previousMonth[0].sessions ?? 1;
+
+        let growth = parseFloat(
+            (
+                ((desiredMonthValue - previousMonthValue) /
+                    previousMonthValue) *
+                100
+            ).toFixed(2)
+        );
+
         return {
             desiredMonth: {
                 value: desiredMonth[0].sessions,
@@ -266,6 +276,56 @@ export class AnalyticsService {
             })
         );
         return months;
+    }
+
+    async getClickThroughRate(appId: string, tagId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const tag = await this.tagService.findOne(tagId);
+        if (!tag) {
+            throw new NotFoundException("Tag not found");
+        }
+
+        const printCount = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                    tagId: tag.id,
+                    eventName: "print",
+                },
+            },
+            {
+                $count: "print",
+            },
+        ]);
+
+        const eventCount = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                    tagId: tag.id,
+                    eventName: {
+                        $nin: ["print", "session_end", "page_changed"],
+                    },
+                },
+            },
+            {
+                $count: "events",
+            },
+        ]);
+
+        const rate = parseFloat(
+            (
+                ((eventCount[0].events ?? 1) / (printCount[0].print ?? 1)) *
+                100
+            ).toFixed(2)
+        );
+        return {
+            value: rate,
+            unit: "%",
+        };
     }
 
     async clear() {

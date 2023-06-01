@@ -27,7 +27,7 @@ export class AnalyticSeed {
             cliendIds.push(faker.string.uuid());
         }
         const urls = ["/", "/about", "/contact", "/register", "/login"];
-        const events = ["page_changed", "click", "dblclick"];
+        const events = ["page_changed", "click", "dblclick", "print"];
 
         const sessions = [];
         for (let clientId of cliendIds) {
