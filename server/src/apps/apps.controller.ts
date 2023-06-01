@@ -16,6 +16,7 @@ import { Role } from "src/users/schemas/user.schema";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
+import { UpdateAppDto } from "./dto/update-app.dto";
 import { IsManagerParamsGuard } from "./guards/is-manager-params.guard";
 import { IsOwnerGuard } from "./guards/is-owner.guard";
 
@@ -67,8 +68,9 @@ export class AppsController {
     }
 
     @Patch(":id")
-    updateApp(@Param("id", ParseObjectIdPipe) id: string) {
-        return this.appsService.updateApp(id);
+    updateApp(@Param("id", ParseObjectIdPipe) id: string,
+    @Body() updateAppDto: UpdateAppDto) {
+        return this.appsService.updateApp(id, updateAppDto);
     }
 
     @Delete(":id")
