@@ -16,6 +16,7 @@ import { AnalyticsService } from "./analytics.service";
 import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { GetSessionStatsDto } from "./dto/get-sessions-stats.dto";
+import { PageViewDto } from "./dto/page-view.dto";
 import { CreateAnalyticsGuard } from "./guards/create-analytics.guard";
 import { GetAnalyticsGuard } from "./guards/get-analytics.guard";
 
@@ -86,5 +87,38 @@ export class AnalyticsController {
     @Get(":appId/getStatsOfCurrentYear")
     getStatsOfCurrentYear(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.analyticsService.getStatsOfCurrentYear(appId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getClickThroughRate/:tagId")
+    getClickThroughRate(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Param("tagId", ParseObjectIdPipe) tagId: string
+    ) {
+        return this.analyticsService.getClickThroughRate(appId, tagId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getPageView")
+    getPageView(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query() data: PageViewDto
+    ) {
+        return this.analyticsService.getPageView(appId, data);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/getClientsPerPeriod")
+    getAvgClientByTimeScale(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Query("scale") scale: "day" | "month" | "year" = "day"
+    ) {
+        return this.analyticsService.getAvgClientByTimeScale(appId, scale);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/bounceRate")
+    getBounceRate(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getBounceRate(appId);
     }
 }
