@@ -1,23 +1,29 @@
 import {
     BadRequestException,
     HttpException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
+    forwardRef,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { TagsService } from "src/tags/tags.service";
 import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
 import { App } from "./schema/app.schema";
 
+
 @Injectable()
 export class AppsService {
     constructor(
         @InjectModel(App.name) private appModel: Model<App>,
-        private readonly userService: UsersService
+        private readonly userService: UsersService,
+        @Inject(forwardRef(() => TagsService))
+        private readonly tagsService: TagsService
     ) {}
 
     async getApps() {
@@ -65,11 +71,13 @@ export class AppsService {
     }
 
     async deleteApp(id: string) {
+        console.log(id);
         const app = await this.appModel.findById(id);
         if (!app) {
             throw new BadRequestException("App not found");
         }
         await this.appModel.deleteOne({ _id: id });
+        await this.tagsService.removeAllByAppId(id);
         return null;
     }
 

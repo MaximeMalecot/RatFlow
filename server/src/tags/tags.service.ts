@@ -1,8 +1,10 @@
 import {
     HttpException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
+    forwardRef,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
@@ -14,6 +16,7 @@ import { Tag } from "./schema/tags.schema";
 export class TagsService {
     constructor(
         @InjectModel(Tag.name) private tagModel: Model<Tag>,
+        @Inject(forwardRef(() => AppsService))
         private readonly appsService: AppsService
     ) {}
 
@@ -74,7 +77,16 @@ export class TagsService {
             throw new InternalServerErrorException(e.message);
         }
     }
-
+    async removeAllByAppId(appId: string) {
+        try {
+            return await this.tagModel.deleteMany({ appId : appId.toString() });
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
+    }
     async remove(id: string) {
         try {
             const tag = await this.tagModel.deleteOne({ _id: id });
