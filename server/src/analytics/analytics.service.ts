@@ -406,10 +406,7 @@ export class AnalyticsService {
             {
                 $group: {
                     _id: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt",
-                        },
+                        $dateToString: scalePipe,
                     },
                     uniqueClientIds: { $addToSet: "$clientId" },
                 },
@@ -417,55 +414,16 @@ export class AnalyticsService {
             {
                 $group: {
                     _id: null,
-                    averageUniqueClientIdsPerDay: {
+                    avgClients: {
                         $avg: { $size: "$uniqueClientIds" },
                     },
                 },
             },
         ]);
-        // const res = await this.analyticModel.aggregate([
-        //     {
-        //         $match: {
-        //             appId: app.id,
-        //         },
-        //     },
-        //     {
-        //         $group: {
-        //             _id: {
-        //                 clientId: "$clientId",
-        //                 date: "$date",
-        //             },
-        //         },
-        //     },
-        //     {
-        //         $group: {
-        //             _id: {
-        //                 clientId: "$_id.clientId",
-        //             },
-        //             date: { $dateToString: scalePipe },
-        //         },
-        //     },
-        //     // {
-        //     //     $group: {
-        //     //         _id: {
-        //     //             $dateToString: scalePipe,
-        //     //         },
-        //     //     },
-        //     // },
-        // ]);
-        // const res = await this.analyticModel
-        //     .find({
-        //         appId: app.id,
-        //         date: {
-        //             $gte: new Date("2023-04-01"),
-        //             $lte: new Date("2023-04-30Z23:59:59"),
-        //         },
-        //     })
-        //     .count();
 
         return {
-            value: res,
-            unit: "session",
+            value: res[0].avgClients,
+            unit: "client",
             scale,
         };
     }
