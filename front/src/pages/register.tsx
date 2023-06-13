@@ -1,17 +1,25 @@
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import { useAuthContext } from "../contexts/auth.context";
 
 export default function Register() {
+    const { register, isConnected } = useAuthContext();
     const {
-        register,
+        register: registerField,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
-    const onSubmit = useCallback((data: any) => {
-        console.log(data);
+    const onSubmit = useCallback(async (data: any) => {
+        if (data.email && data.password) {
+            await register(data.email, data.password);
+        }
     }, []);
+
+    if (isConnected) {
+        return <Navigate to="/"></Navigate>;
+    }
 
     return (
         <div className="px-20 bg-dark-blue py-10 flex justify-center">
@@ -28,7 +36,7 @@ export default function Register() {
                             className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0	"
                             type="mail"
                             placeholder="Type your e-mail"
-                            {...register("email", { required: true })}
+                            {...registerField("email", { required: true })}
                         />
                         {errors.mail && <span>This field is required</span>}
                     </div>
@@ -37,7 +45,7 @@ export default function Register() {
                             className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0	"
                             placeholder="Type your password"
                             type="password"
-                            {...register("password", { required: true })}
+                            {...registerField("password", { required: true })}
                         />
                         {errors.password && <span>This field is required</span>}
                     </div>

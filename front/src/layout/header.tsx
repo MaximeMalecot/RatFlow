@@ -4,7 +4,7 @@ import { YellowBtn } from "../components/yellow-btn";
 import { useAuthContext } from "../contexts/auth.context";
 
 export default function Header() {
-    const { isConnected } = useAuthContext();
+    const { isConnected, data, logout } = useAuthContext();
 
     return (
         <header>
@@ -50,9 +50,23 @@ export default function Header() {
                     </ul>
                     <div className="flex-1">
                         {isConnected ? (
-                            <YellowBtn>
-                                <Link to={"/dashboard"}>Dashboard </Link>
-                            </YellowBtn>
+                            <div className="flex items-center gap-4">
+                                <ul className="menu menu-horizontal px-1">
+                                    <li className="hidden md:block">
+                                        <details>
+                                            <summary>{data!.email}</summary>
+                                            <ul className="p-2 bg-base-100">
+                                                <li onClick={logout}>
+                                                    <p>Logout</p>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </li>
+                                </ul>
+                                <YellowBtn>
+                                    <Link to={"/dashboard"}>Dashboard </Link>
+                                </YellowBtn>
+                            </div>
                         ) : (
                             <YellowBtn>
                                 {" "}
