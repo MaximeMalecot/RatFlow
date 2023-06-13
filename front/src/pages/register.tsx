@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 
-export default function Login() {
+export default function Register() {
     const {
         register,
         handleSubmit,
@@ -17,7 +17,7 @@ export default function Login() {
         <div className="px-20 bg-dark-blue py-10 flex justify-center">
             <div className="bg-white w-fit p-10 rounded rounded-xl flex flex-col gap-3">
                 <h1 className="uppercase text-xl font-bold text-center mb-3">
-                    Sign in to Ratflow
+                    Welcome on Ratflow
                 </h1>
                 <form
                     onSubmit={handleSubmit(onSubmit)}
@@ -48,9 +48,9 @@ export default function Login() {
                     ></input>
                 </form>
                 <p>
-                    Not yet registered ?
-                    <Link className="text-blue" to="/register">
-                        Sign up
+                    Already a user ?{" "}
+                    <Link className="text-blue" to="/login">
+                        Log in
                     </Link>
                 </p>
             </div>

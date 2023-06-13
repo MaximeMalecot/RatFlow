@@ -2,9 +2,15 @@
 export default {
     content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
     theme: {
-        colors: {
-            yellow: "#FCC453",
+        extend: {
+            colors: {
+                primary: "#08163c",
+                yellow: "#FCC453",
+                "dark-blue": "#08163c",
+                blue: "#0b65e3",
+            },
         },
     },
+
     plugins: [require("daisyui")],
 };

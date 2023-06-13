@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import FullLogo from "../assets/full-logo.png";
+import { YellowBtn } from "../components/yellow-btn";
 import { useAuthContext } from "../contexts/auth.context";
 
 export default function Header() {
@@ -30,10 +31,10 @@ export default function Header() {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
-                        <li>
+                        <li className="hidden md:block">
                             <a>Link</a>
                         </li>
-                        <li>
+                        <li className="hidden md:block">
                             <details>
                                 <summary>Parent</summary>
                                 <ul className="p-2 bg-base-100">
@@ -46,24 +47,19 @@ export default function Header() {
                                 </ul>
                             </details>
                         </li>
-                        <li className="flex-1">
-                            {!isConnected ? (
-                                <Link
-                                    to={"/dashboard"}
-                                    className="flex justify-center btn bg-yellow normal-case text-md h-fit"
-                                >
-                                    Dashboard
-                                </Link>
-                            ) : (
-                                <Link
-                                    to={"/login"}
-                                    className="btn bg-yellow normal-case text-md h-fit"
-                                >
-                                    Try
-                                </Link>
-                            )}
-                        </li>
                     </ul>
+                    <div className="flex-1">
+                        {isConnected ? (
+                            <YellowBtn>
+                                <Link to={"/dashboard"}>Dashboard </Link>
+                            </YellowBtn>
+                        ) : (
+                            <YellowBtn>
+                                {" "}
+                                <Link to={"/register"}>Try </Link>
+                            </YellowBtn>
+                        )}
+                    </div>
                 </div>
             </div>
         </header>
