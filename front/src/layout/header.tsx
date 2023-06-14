@@ -32,17 +32,14 @@ export default function Header() {
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
                         <li className="hidden md:block">
-                            <a>Link</a>
-                        </li>
-                        <li className="hidden md:block">
                             <details>
-                                <summary>Parent</summary>
+                                <summary>Libraries</summary>
                                 <ul className="p-2 bg-base-100">
                                     <li>
-                                        <a>Link 1</a>
+                                        <a>Front</a>
                                     </li>
                                     <li>
-                                        <a>Link 2</a>
+                                        <a>Back</a>
                                     </li>
                                 </ul>
                             </details>

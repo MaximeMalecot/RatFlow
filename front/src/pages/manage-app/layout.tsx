@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import { AppContextProvider } from "../../contexts/manage-app.context";
 import { AppInterface } from "../../interfaces/app";
 import appService from "../../services/app.service";
@@ -31,9 +31,16 @@ export default function ManageAppLayout() {
     if (!id || !app) return <div className="px-20">Invalid app id</div>;
 
     return (
-        <div className="px-20 flex flex-col gap-2 py-5">
-            <div className="flex">
-                App -{">"} <h3>{app.name}</h3>
+        <div className="px-20 flex flex-col gap-2 py-5 ">
+            <div className="text-sm breadcrumbs text-blue">
+                <ul>
+                    <li>
+                        <Link to={"/dashboard"}>Apps</Link>
+                    </li>
+                    <li>
+                        <Link to={`/manage/app/${app._id}`}>{app._id}</Link>
+                    </li>
+                </ul>
             </div>
             <AppContextProvider app={app}>
                 <Outlet />

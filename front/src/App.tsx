@@ -1,5 +1,6 @@
 import { Suspense, lazy } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { useAuthContext } from "./contexts/auth.context";
 import AppLayout from "./layout/app-layout";
 import Home from "./pages/home";
 import NotFound from "./pages/not-found";
@@ -11,6 +12,8 @@ const ManageAppLayout = lazy(() => import("./pages/manage-app/layout"));
 const ManageAppHome = lazy(() => import("./pages/manage-app"));
 
 function App() {
+    const { isConnected } = useAuthContext();
+
     return (
         <div className="">
             <Suspense fallback={<div>Loading...</div>}>
@@ -18,11 +21,26 @@ function App() {
                     <Route element={<AppLayout />}>
                         <Route
                             path="/manage/app/:id"
-                            element={<ManageAppLayout />}
+                            element={
+                                isConnected ? (
+                                    <ManageAppLayout />
+                                ) : (
+                                    <Navigate to="/login" />
+                                )
+                            }
                         >
                             <Route path="" element={<ManageAppHome />} />
                         </Route>
-                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route
+                            path="/dashboard"
+                            element={
+                                isConnected ? (
+                                    <Dashboard />
+                                ) : (
+                                    <Navigate to="/login" />
+                                )
+                            }
+                        />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/" element={<Home />} />
