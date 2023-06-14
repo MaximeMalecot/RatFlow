@@ -36,18 +36,16 @@ export default function ManageApp() {
     }, []);
 
     return (
-        <div className="w-100 flex flex-col gap-2">
-            <h1 className="text-2xl ">Home</h1>
+        <div className="w-full flex flex-col" style={{ width: "100%" }}>
+            <h1 className="text-2xl">Home</h1>
             <div className="divider"></div>
             <div
-                className="flex flex-col gap-3"
-                style={{ width: "70%", height: "30vh" }}
+                className="flex flex-col gap-3 border-2 border-slate-200 p-3 rounded rounded-xl"
+                style={{ width: "100%", height: "30vh" }}
             >
                 <h3 className="text-xl ">Yearly stats</h3>
                 <ResponsiveContainer width="100%" height={"100%"}>
                     <BarChart
-                        width={500}
-                        height={300}
                         data={mappedYearStats}
                         margin={{
                             top: 5,
@@ -74,7 +72,6 @@ export default function ManageApp() {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-            <div className="divider"></div>
         </div>
     );
 }
