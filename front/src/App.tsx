@@ -6,6 +6,7 @@ import NotFound from "./pages/not-found";
 
 const Login = lazy(() => import("./pages/login"));
 const Register = lazy(() => import("./pages/register"));
+const Dashboard = lazy(() => import("./pages/dashboard"));
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
             <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route element={<AppLayout />}>
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/" element={<Home />} />

@@ -63,15 +63,14 @@ export default function Header() {
                                         </details>
                                     </li>
                                 </ul>
-                                <YellowBtn>
-                                    <Link to={"/dashboard"}>Dashboard </Link>
-                                </YellowBtn>
+                                <Link to={"/dashboard"}>
+                                    <YellowBtn>Dashboard</YellowBtn>
+                                </Link>
                             </div>
                         ) : (
-                            <YellowBtn>
-                                {" "}
-                                <Link to={"/register"}>Try </Link>
-                            </YellowBtn>
+                            <Link to={"/register"}>
+                                <YellowBtn>Try</YellowBtn>
+                            </Link>
                         )}
                     </div>
                 </div>
