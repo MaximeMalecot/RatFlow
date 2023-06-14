@@ -23,7 +23,7 @@ class UserService {
         return await res.json();
     }
 
-    async getUser(id: string){
+    async getUser(id: string) {
         const res = await fetch(`${API_ENDPOINT}/users/${id}`, {
             method: "GET",
             headers: {
@@ -31,6 +31,33 @@ class UserService {
             },
         });
         return await res.json();
+    }
+
+    async updatePassword(
+        userId: string,
+        oldPassword: string,
+        password: string
+    ): Promise<boolean> {
+        const res = await fetch(`${API_ENDPOINT}/users/${userId}`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeader(),
+            },
+            body: JSON.stringify({
+                oldPassword,
+                password,
+            }),
+        });
+        const status = res.status;
+        if (status !== 200) {
+            const jsonRes = await res.json();
+            if (jsonRes.message) {
+                throw new Error(JSON.stringify(jsonRes.message));
+            }
+            throw new Error("Failed to update password");
+        }
+        return true;
     }
 }
 
