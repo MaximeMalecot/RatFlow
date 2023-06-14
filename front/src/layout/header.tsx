@@ -36,10 +36,24 @@ export default function Header() {
                                 <summary>Libraries</summary>
                                 <ul className="p-2 bg-base-100">
                                     <li>
-                                        <a>Front</a>
+                                        <a
+                                            target="_blank"
+                                            href={
+                                                "https://github.com/MaximeMalecot/RatFlow-SDK"
+                                            }
+                                        >
+                                            Front
+                                        </a>
                                     </li>
                                     <li>
-                                        <a>Back</a>
+                                        <a
+                                            target="_blank"
+                                            href={
+                                                "https://github.com/MaximeMalecot/RatFlow-SDK"
+                                            }
+                                        >
+                                            Back
+                                        </a>
                                     </li>
                                 </ul>
                             </details>
