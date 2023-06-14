@@ -14,6 +14,7 @@ const Tags = lazy(() => import("./pages/manage-app/tags"));
 const Sessions = lazy(() => import("./pages/manage-app/sessions"));
 const Analytics = lazy(() => import("./pages/manage-app/analytics"));
 const Settings = lazy(() => import("./pages/manage-app/settings"));
+const Account = lazy(() => import("./pages/account"));
 
 function App() {
     const { isConnected } = useAuthContext();
@@ -51,6 +52,7 @@ function App() {
                                     path="/dashboard"
                                     element={<Dashboard />}
                                 />
+                                <Route path="/account" element={<Account />} />
                             </>
                         )}
                         <Route path="/login" element={<Login />} />

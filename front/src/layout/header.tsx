@@ -53,6 +53,11 @@ export default function Header() {
                                         <details>
                                             <summary>{data!.email}</summary>
                                             <ul className="p-2 bg-base-100">
+                                                <li>
+                                                    <Link to="/account">
+                                                        Account
+                                                    </Link>
+                                                </li>
                                                 <li onClick={logout}>
                                                     <p>Logout</p>
                                                 </li>
