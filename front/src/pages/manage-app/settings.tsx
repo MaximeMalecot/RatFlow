@@ -1,10 +1,12 @@
 import { useAppContext } from "../../contexts/manage-app.context";
+import { notify } from "../../utils/toast";
 
 export default function Settings() {
     const { app } = useAppContext();
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(app.appSecret);
+        notify("App secret copied to clipboard");
     };
 
     return (

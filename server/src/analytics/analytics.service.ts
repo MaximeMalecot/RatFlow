@@ -117,7 +117,7 @@ export class AnalyticsService {
             },
         ]);
         return {
-            value: res[0].avgDuration,
+            value: res[0]?.avgDuration ?? 0,
             unit: "minute",
         };
     }

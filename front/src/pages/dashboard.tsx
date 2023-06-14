@@ -4,6 +4,7 @@ import NewAppModal from "../components/new-app-modal";
 import { YellowBtn } from "../components/yellow-btn";
 import { AppInList } from "../interfaces/app";
 import AppService from "../services/app.service";
+import { displayMsg } from "../utils/toast";
 
 export default function Dashboard() {
     const [apps, setApps] = useState<AppInList[]>([]);
@@ -22,6 +23,7 @@ export default function Dashboard() {
         try {
             const res = await AppService.create(name);
             setApps((apps) => [...apps, res]);
+            displayMsg("App created successfully");
         } catch (e: any) {
             console.error(e.message);
         }

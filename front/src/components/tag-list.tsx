@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Tag } from "../interfaces/tag";
+import { notify } from "../utils/toast";
 
 interface TagListProps {
     tags: Tag[];
@@ -13,6 +14,7 @@ export default function TagList({ tags, deleteTag }: TagListProps) {
         (tag: Tag) => (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
             navigator.clipboard.writeText(tag._id);
             setLastCopied(tag._id);
+            notify("Tag id copied to clipboard");
         };
 
     return (

@@ -5,6 +5,7 @@ import { TOKEN_STORAGE_KEY } from "../constants/keys";
 import { UserData } from "../interfaces/user";
 import authService from "../services/auth.service";
 import userService from "../services/user.service";
+import { notify } from "../utils/toast";
 
 interface TokenInterface {
     exp: number;
@@ -69,6 +70,7 @@ const useAuth = () => {
             return;
         }
         if (decoded.exp && decoded.exp < Date.now() / 1000) {
+            notify("Expired token, please login again");
             logout();
             return;
         } else {
