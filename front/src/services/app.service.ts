@@ -43,6 +43,18 @@ class AppService {
         if (res.status !== 201) throw new Error("Failed to create app");
         return await res.json();
     }
+
+    async delete(id: string) {
+        const res = await fetch(`${API_ENDPOINT}/apps/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeader(),
+            },
+        });
+
+        if (res.status !== 200) throw new Error("Failed to delete app");
+    }
 }
 
 export default new AppService();
