@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { AppInterface } from "../interfaces/app";
-import appService from "../services/app.service";
+import { Outlet, useParams } from "react-router-dom";
+import { AppContextProvider } from "../../contexts/manage-app.context";
+import { AppInterface } from "../../interfaces/app";
+import appService from "../../services/app.service";
 
-export default function ManageApp() {
+export default function ManageAppLayout() {
     const { id } = useParams<{ id: string }>();
     const [app, setApp] = useState<AppInterface | null>(null);
     const [loading, setLoading] = useState(true);
@@ -34,7 +35,9 @@ export default function ManageApp() {
             <div className="flex">
                 App -{">"} <h3>{app.name}</h3>
             </div>
-            <h1 className="text-2xl">Home</h1>
+            <AppContextProvider app={app}>
+                <Outlet />
+            </AppContextProvider>
         </div>
     );
 }
