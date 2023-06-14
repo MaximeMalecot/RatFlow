@@ -33,7 +33,7 @@ export default function Login() {
                 >
                     <div className="form-control w-full max-w-xs">
                         <input
-                            className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0	"
+                            className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0"
                             type="mail"
                             placeholder="Type your e-mail"
                             {...registerField("email", { required: true })}
@@ -42,7 +42,7 @@ export default function Login() {
                     </div>
                     <div className="form-control w-full max-w-xs">
                         <input
-                            className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0	"
+                            className="input input-bordered w-full max-w-xs border-1 border-slate-500 !outline-none outline-0"
                             placeholder="Type your password"
                             type="password"
                             {...registerField("password", { required: true })}

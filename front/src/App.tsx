@@ -11,6 +11,9 @@ const Dashboard = lazy(() => import("./pages/dashboard"));
 const ManageAppLayout = lazy(() => import("./pages/manage-app/layout"));
 const ManageAppHome = lazy(() => import("./pages/manage-app"));
 const Tags = lazy(() => import("./pages/manage-app/tags"));
+const Sessions = lazy(() => import("./pages/manage-app/sessions"));
+const Analytics = lazy(() => import("./pages/manage-app/analytics"));
+const Settings = lazy(() => import("./pages/manage-app/settings"));
 
 function App() {
     const { isConnected } = useAuthContext();
@@ -31,6 +34,18 @@ function App() {
                                         element={<ManageAppHome />}
                                     />
                                     <Route path="tags" element={<Tags />} />
+                                    <Route
+                                        path="sessions"
+                                        element={<Sessions />}
+                                    />
+                                    <Route
+                                        path="settings"
+                                        element={<Settings />}
+                                    />
+                                    <Route
+                                        path="analytics"
+                                        element={<Analytics />}
+                                    />
                                 </Route>
                                 <Route
                                     path="/dashboard"

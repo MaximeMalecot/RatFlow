@@ -9,6 +9,7 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
+import AppStats from "../../components/app-stats";
 import { useAppContext } from "../../contexts/manage-app.context";
 import analyticsService, {
     StatsOfCurrentYear,
@@ -17,6 +18,7 @@ import analyticsService, {
 export default function ManageApp() {
     const { app } = useAppContext();
     const [yearStats, setYearStats] = useState<StatsOfCurrentYear>([]);
+
     const mappedYearStats = useMemo(
         () =>
             yearStats.map((stat) => ({
@@ -36,9 +38,12 @@ export default function ManageApp() {
     }, []);
 
     return (
-        <div className="w-full flex flex-col" style={{ width: "100%" }}>
+        <div className="w-full flex flex-col gap-3" style={{ width: "100%" }}>
             <h1 className="text-2xl">Home</h1>
             <div className="divider"></div>
+            <div className="flex flex-col gap-3 border-2 border-slate-200 p-3 rounded rounded-xl">
+                <AppStats appId={app._id} />
+            </div>
             <div
                 className="flex flex-col gap-3 border-2 border-slate-200 p-3 rounded rounded-xl"
                 style={{ width: "100%", height: "30vh" }}
@@ -71,6 +76,12 @@ export default function ManageApp() {
                         />
                     </BarChart>
                 </ResponsiveContainer>
+            </div>
+            <div
+                className="flex flex-col gap-3 border-2 border-slate-200 p-3 rounded rounded-xl"
+                style={{ width: "100%", height: "30vh" }}
+            >
+                <h3 className="text-xl ">Monthly sessions stats</h3>
             </div>
         </div>
     );

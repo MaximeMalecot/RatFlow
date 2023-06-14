@@ -7,8 +7,8 @@ import appService from "../../services/app.service";
 function SideMenu({ baseUrl }: { baseUrl: string }) {
     return (
         <ul
-            className="menu bg-base-200 rounded-box capitalize"
-            style={{ width: "10%" }}
+            id="side-menu"
+            className="menu menu-horizontal md:menu-vertical bg-base-200 rounded-box capitalize w-full lg:!w-1/5"
         >
             <li>
                 <Link to={baseUrl}>Home</Link>
@@ -18,16 +18,19 @@ function SideMenu({ baseUrl }: { baseUrl: string }) {
                     <summary>Stats</summary>
                     <ul>
                         <li>
-                            <Link to={`${baseUrl}/stat1`}>stat 1</Link>
+                            <Link to={`${baseUrl}/sessions`}>Sessions</Link>
                         </li>
                         <li>
-                            <Link to={`${baseUrl}/stat2`}>stat2</Link>
+                            <Link to={`${baseUrl}/analytics`}>Analytics</Link>
                         </li>
                     </ul>
                 </details>
             </li>
             <li>
                 <Link to={`${baseUrl}/tags`}>Tags</Link>
+            </li>
+            <li>
+                <Link to={`${baseUrl}/settings`}>Settings</Link>
             </li>
         </ul>
     );
@@ -40,7 +43,6 @@ export default function ManageAppLayout() {
 
     const fetchApp = useCallback(async () => {
         try {
-            console.log("here");
             if (!id) throw new Error("Invalid app id");
             const res = await appService.getApp(id);
             setApp(res);
@@ -73,7 +75,7 @@ export default function ManageAppLayout() {
                     </ul>
                 </div>
             </div>
-            <div className="flex w-full gap-3">
+            <div className="flex flex-col md:flex-row w-full gap-3">
                 <SideMenu baseUrl={baseUrl} />
                 <AppContextProvider app={app}>
                     <Outlet />
