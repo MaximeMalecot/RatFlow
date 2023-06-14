@@ -36,7 +36,7 @@ export default function Dashboard() {
             <h1 className="text-2xl mb-5">Dashboard</h1>
             <div className="flex flex-col">
                 <div className="flex justify-between">
-                    <h2 className="text-lg">My apps</h2>
+                    <h2 className="text-lg">My apps ({apps.length})</h2>
                     <YellowBtn
                         onClick={() => setIsModalOpen(true)}
                         className="w-fit"

@@ -10,6 +10,7 @@ const Register = lazy(() => import("./pages/register"));
 const Dashboard = lazy(() => import("./pages/dashboard"));
 const ManageAppLayout = lazy(() => import("./pages/manage-app/layout"));
 const ManageAppHome = lazy(() => import("./pages/manage-app"));
+const Tags = lazy(() => import("./pages/manage-app/tags"));
 
 function App() {
     const { isConnected } = useAuthContext();
@@ -29,6 +30,7 @@ function App() {
                                         path=""
                                         element={<ManageAppHome />}
                                     />
+                                    <Route path="tags" element={<Tags />} />
                                 </Route>
                                 <Route
                                     path="/dashboard"
