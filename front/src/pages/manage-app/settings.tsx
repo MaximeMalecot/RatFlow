@@ -3,9 +3,11 @@ import BaseSettings from "../../components/settings/base-settings";
 import DangerSettings from "../../components/settings/danger-settings";
 import KeysSettings from "../../components/settings/keys-settings";
 import WhiteListSettings from "../../components/settings/whitelist-settings";
+import { useAuthContext } from "../../contexts/auth.context";
 import { useAppContext } from "../../contexts/manage-app.context";
 
 export default function Settings() {
+    const { data } = useAuthContext();
     const { app } = useAppContext();
     const navigate = useNavigate();
 
@@ -14,9 +16,11 @@ export default function Settings() {
             <h1 className="text-2xl">App settings</h1>
             <div className="divider my-0"></div>
             <BaseSettings />
-            <WhiteListSettings />
+            {app.owner === data?._id && <WhiteListSettings />}
             <KeysSettings />
-            <DangerSettings onDeletion={() => navigate("/dashboard")} />
+            {app.owner === data?._id && (
+                <DangerSettings onDeletion={() => navigate("/dashboard")} />
+            )}
         </div>
     );
 }

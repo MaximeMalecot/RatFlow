@@ -78,7 +78,7 @@ export default function WhiteListSettings() {
                     <div className="flex flex-col gap-5">
                         <div className="flex items-center gap-3">
                             <input
-                                type="text"
+                                type="mail"
                                 className={
                                     "input input-bordered w-4/5 !outline-none outline-0 !border-1 !border-slate-300 "
                                 }
@@ -93,12 +93,22 @@ export default function WhiteListSettings() {
                                     }
                                 }}
                             />
-                            <button
-                                onClick={addUser}
-                                className="btn btn-primary w-1/5"
-                            >
-                                Add user
-                            </button>
+                            {loading ? (
+                                <button
+                                    disabled={true}
+                                    onClick={addUser}
+                                    className="btn btn-primary w-1/5"
+                                >
+                                    Processing
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={addUser}
+                                    className="btn btn-primary w-1/5"
+                                >
+                                    Add user
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -141,34 +141,40 @@ export class AppsService {
             if (!app) {
                 throw new NotFoundException("App not found");
             }
-            const appWithUsers = await this.appModel.aggregate([
-                {
-                    $match: {
-                        _id: app._id,
+            const appWithUsers = await this.appModel
+                .aggregate([
+                    {
+                        $match: {
+                            _id: app._id,
+                        },
                     },
-                },
-                {
-                    $unwind: "$users",
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "users",
-                        foreignField: "_id",
-                        as: "user",
+                    {
+                        $unwind: "$users",
                     },
-                },
-                {
-                    $project: {
-                        "user.password": 0,
-                        "user.roles": 0,
-                        "user.createdAt": 0,
-                        "user.__v": 0,
-                        "user._id": 0,
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "users",
+                            foreignField: "_id",
+                            as: "user",
+                        },
                     },
-                },
-            ]);
-            return appWithUsers[0]?.user ?? [];
+                    {
+                        $project: {
+                            "user.password": 0,
+                            "user.roles": 0,
+                            "user.createdAt": 0,
+                            "user.__v": 0,
+                            "user._id": 0,
+                        },
+                    },
+                ])
+                .then((apps) => {
+                    return apps.reduce((acc, curr) => {
+                        return [...acc, ...curr.user];
+                    }, []);
+                });
+            return appWithUsers ?? [];
         } catch (e) {
             if (e instanceof HttpException) throw e;
 
