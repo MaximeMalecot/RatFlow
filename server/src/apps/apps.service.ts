@@ -141,7 +141,35 @@ export class AppsService {
             if (!app) {
                 throw new NotFoundException("App not found");
             }
-            return app.users;
+            const appWithUsers = await this.appModel.aggregate([
+                {
+                    $match: {
+                        _id: app._id,
+                    },
+                },
+                {
+                    $unwind: "$users",
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "users",
+                        foreignField: "_id",
+                        as: "user",
+                    },
+                },
+                {
+                    $project: {
+                        "user.password": 0,
+                        "user.roles": 0,
+                        "user.createdAt": 0,
+                        "user.__v": 0,
+                        "user._id": 0,
+                    },
+                },
+            ]);
+
+            return appWithUsers[0].user ?? [];
         } catch (e) {
             if (e instanceof HttpException) throw e;
 
