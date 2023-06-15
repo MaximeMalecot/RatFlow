@@ -28,6 +28,19 @@ class AppService {
         return await res.json();
     }
 
+    async getWhitelistedUsers(appId: string) {
+        const res = await fetch(`${API_ENDPOINT}/apps/users/${appId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeader(),
+            },
+        });
+
+        if (res.status !== 200) throw new Error("Failed to fetch users");
+        return await res.json();
+    }
+
     async updateAppName(appId: string, name: string) {
         const res = await fetch(`${API_ENDPOINT}/apps/${appId}`, {
             method: "PATCH",
@@ -78,7 +91,7 @@ class AppService {
             }),
         });
 
-        if (res.status !== 200) throw new Error("Failed to update app origins");
+        if (res.status !== 201) throw new Error("Failed to add user on app");
         return await res.json();
     }
 

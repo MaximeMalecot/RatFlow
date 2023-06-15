@@ -168,8 +168,8 @@ export class AppsService {
                     },
                 },
             ]);
-
-            return appWithUsers[0].user ?? [];
+            console.log(appWithUsers);
+            return appWithUsers[0]?.user ?? [];
         } catch (e) {
             if (e instanceof HttpException) throw e;
 
