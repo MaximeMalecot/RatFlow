@@ -13,6 +13,14 @@ class AuthService {
             }),
         });
 
+        if (res.status !== 200) {
+            const jsonRes = await res.json();
+            if (jsonRes.message) {
+                throw new Error(JSON.stringify(jsonRes.message));
+            }
+            throw new Error("Failed to login");
+        }
+
         return await res.json();
     }
 
@@ -28,7 +36,15 @@ class AuthService {
             }),
         });
 
-        return await res.json();
+        if (res.status !== 201) {
+            const jsonRes = await res.json();
+            if (jsonRes.message) {
+                throw new Error(JSON.stringify(jsonRes.message));
+            }
+            throw new Error("Failed to register");
+        }
+
+        return true;
     }
 }
 

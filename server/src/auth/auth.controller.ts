@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Throttle } from "@nestjs/throttler";
 import { AuthService } from "./auth.service";
@@ -14,6 +14,7 @@ export class AuthController {
     @Throttle(5, 60)
     @Post("login")
     @Public()
+    @HttpCode(200)
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }

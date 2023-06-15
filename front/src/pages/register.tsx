@@ -1,10 +1,12 @@
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/auth.context";
+import { displayMsg } from "../utils/toast";
 
 export default function Register() {
     const { register, isConnected } = useAuthContext();
+    const navigate = useNavigate();
     const {
         register: registerField,
         handleSubmit,
@@ -12,8 +14,13 @@ export default function Register() {
     } = useForm();
 
     const onSubmit = useCallback(async (data: any) => {
-        if (data.email && data.password) {
-            await register(data.email, data.password);
+        try {
+            if (data.email && data.password) {
+                await register(data.email, data.password);
+                navigate("/login");
+            }
+        } catch (e: any) {
+            displayMsg(e.message, "error");
         }
     }, []);
 

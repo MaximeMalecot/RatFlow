@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { Link, Navigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/auth.context";
+import { displayMsg } from "../utils/toast";
 
 export default function Login() {
     const { login, isConnected } = useAuthContext();
@@ -13,8 +14,11 @@ export default function Login() {
     } = useForm();
 
     const onSubmit = useCallback(async (data: any) => {
-        await login(data.email, data.password);
-        console.log(data);
+        try {
+            await login(data.email, data.password);
+        } catch (e: any) {
+            displayMsg(e.message, "error");
+        }
     }, []);
 
     if (isConnected) {
