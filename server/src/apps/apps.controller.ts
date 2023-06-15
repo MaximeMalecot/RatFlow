@@ -16,7 +16,9 @@ import { Role } from "src/users/schemas/user.schema";
 import { AppsService } from "./apps.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
+import { UpdateAppOriginsDto } from "./dto/update-app-origins.dto";
 import { IsManagerParamsGuard } from "./guards/is-manager-params.guard";
+import { IsOwnerParamsGuard } from "./guards/is-owner-params.guard";
 import { IsOwnerGuard } from "./guards/is-owner.guard";
 
 @ApiTags("apps")
@@ -29,6 +31,12 @@ export class AppsController {
     @UseGuards(IsManagerParamsGuard)
     getAppUsers(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.appsService.getUsersforApp(appId);
+    }
+
+    // Apps a user has access to but is not owner of
+    @Get("whitelisted")
+    getWhiteListedApp(@Req() req: any) {
+        return this.appsService.getWhiteListApps(req.user.id);
     }
 
     @Post("users")
@@ -56,9 +64,10 @@ export class AppsController {
         return this.appsService.getSelfApps(req.user.id);
     }
 
-    @Get(":id")
-    getApp(@Param("id", ParseObjectIdPipe) id: string) {
-        return this.appsService.getApp(id);
+    @Get(":appId")
+    @UseGuards(IsManagerParamsGuard)
+    getApp(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.appsService.getApp(appId);
     }
 
     @Post("")
@@ -66,13 +75,24 @@ export class AppsController {
         return this.appsService.createApp(createAppDto, req.user.id);
     }
 
+    @Patch(":appId/origins")
+    @UseGuards(IsManagerParamsGuard)
+    updateOrigins(
+        @Param("appId", ParseObjectIdPipe) appId: string,
+        @Body() origins: UpdateAppOriginsDto
+    ) {
+        return this.appsService.updateAppOrigins(appId, origins);
+    }
+
     @Patch(":id")
+    @UseGuards(IsManagerParamsGuard)
     updateApp(@Param("id", ParseObjectIdPipe) id: string) {
         return this.appsService.updateApp(id);
     }
 
-    @Delete(":id")
-    deleteApp(@Param("id", ParseObjectIdPipe) id: string) {
-        return this.appsService.deleteApp(id);
+    @Delete(":appId")
+    @UseGuards(IsOwnerParamsGuard)
+    deleteApp(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.appsService.deleteApp(appId);
     }
 }

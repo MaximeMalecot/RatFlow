@@ -15,6 +15,19 @@ class AppService {
         return await res.json();
     }
 
+    async getAppsWhitelistedOn() {
+        const res = await fetch(`${API_ENDPOINT}/apps/whitelisted`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeader(),
+            },
+        });
+
+        if (res.status !== 200) throw new Error("Failed to fetch apps");
+        return await res.json();
+    }
+
     async getApp(id: string) {
         const res = await fetch(`${API_ENDPOINT}/apps/${id}`, {
             method: "GET",

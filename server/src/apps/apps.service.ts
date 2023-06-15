@@ -11,6 +11,7 @@ import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { UpdateAppOriginsDto } from "./dto/update-app-origins.dto";
 import { App } from "./schema/app.schema";
 
 @Injectable()
@@ -26,6 +27,10 @@ export class AppsService {
 
     async getSelfApps(userId: string) {
         return this.appModel.find({ owner: userId });
+    }
+
+    async getWhiteListApps(userId: string) {
+        return await this.appModel.find({ users: { $in: [userId] } });
     }
 
     async getApp(id: string) {
@@ -61,7 +66,12 @@ export class AppsService {
     }
 
     async updateApp(id: string) {
-        return {};
+        const app = await this.appModel.findById(id);
+        if (!app) {
+            throw new BadRequestException("App not found");
+        }
+        app.name = "new name";
+        return await app.save();
     }
 
     async deleteApp(id: string) {
@@ -76,6 +86,16 @@ export class AppsService {
     async getAppOrigins(id: string) {
         const app = await this.appModel.findById(id);
         return app.origins;
+    }
+
+    async updateAppOrigins(id: string, data: UpdateAppOriginsDto) {
+        const app = await this.appModel.findById(id);
+        if (!app) {
+            throw new BadRequestException("App not found");
+        }
+        const { origins } = data;
+        app.origins = Array.from(new Set(origins));
+        return await app.save();
     }
 
     async findAll() {

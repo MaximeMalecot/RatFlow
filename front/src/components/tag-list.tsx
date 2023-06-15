@@ -12,7 +12,7 @@ export default function TagList({ tags, deleteTag }: TagListProps) {
     const [lastCopied, setLastCopied] = useState<string | null>(null);
 
     const copyTagId =
-        (tag: Tag) => (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+        (tag: Tag) => (_: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
             navigator.clipboard.writeText(tag._id);
             copyToClipboard({ text: tag._id, label: "Tag id", toast: true });
             setLastCopied(tag._id);
