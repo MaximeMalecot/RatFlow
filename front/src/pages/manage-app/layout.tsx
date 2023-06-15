@@ -78,7 +78,7 @@ export default function ManageAppLayout() {
             </div>
             <div className="flex flex-col md:flex-row w-full gap-3">
                 <SideMenu baseUrl={baseUrl} />
-                <AppContextProvider app={app}>
+                <AppContextProvider app={app} reload={fetchApp}>
                     <Outlet />
                 </AppContextProvider>
             </div>

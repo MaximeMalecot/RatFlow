@@ -65,12 +65,19 @@ export class AppsService {
         }
     }
 
-    async updateApp(id: string) {
+    async updateNameApp(id: string, name: string) {
         const app = await this.appModel.findById(id);
         if (!app) {
             throw new BadRequestException("App not found");
         }
-        app.name = "new name";
+        name = name.trim();
+        if (name.length < 3) {
+            throw new BadRequestException(
+                "Name must be at least 3 characters long"
+            );
+        }
+
+        app.name = name;
         return await app.save();
     }
 
