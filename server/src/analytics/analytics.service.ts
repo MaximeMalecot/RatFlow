@@ -152,7 +152,7 @@ export class AnalyticsService {
             },
         ]);
         return {
-            value: res[0].avgPages,
+            value: res[0]?.avgPages ?? 0,
             unit: "pages",
         };
     }
@@ -212,7 +212,7 @@ export class AnalyticsService {
         ]);
 
         return {
-            value: res[0].avgSessions,
+            value: res[0]?.avgSessions ?? 0,
             unit: "session",
             scale,
         };
@@ -235,8 +235,8 @@ export class AnalyticsService {
             app.id
         );
 
-        const desiredMonthValue = desiredMonth[0].sessions ?? 1;
-        const previousMonthValue = previousMonth[0].sessions ?? 1;
+        const desiredMonthValue = desiredMonth[0]?.sessions ?? 1;
+        const previousMonthValue = previousMonth[0]?.sessions ?? 1;
 
         let growth = parseFloat(
             (
@@ -248,11 +248,11 @@ export class AnalyticsService {
 
         return {
             desiredMonth: {
-                value: desiredMonth[0].sessions,
+                value: desiredMonth[0]?.sessions ?? 0,
                 unit: "session",
             },
             previousMonth: {
-                value: previousMonth[0].sessions,
+                value: previousMonth[0]?.sessions ?? 0,
                 unit: "session",
             },
             growth: {
@@ -324,7 +324,7 @@ export class AnalyticsService {
 
         const rate = parseFloat(
             (
-                ((eventCount[0].events ?? 1) / (printCount[0].print ?? 1)) *
+                ((eventCount[0]?.events ?? 1) / (printCount[0]?.print ?? 1)) *
                 100
             ).toFixed(2)
         );
