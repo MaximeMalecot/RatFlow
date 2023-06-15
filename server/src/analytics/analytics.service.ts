@@ -324,7 +324,7 @@ export class AnalyticsService {
 
         const rate = parseFloat(
             (
-                ((eventCount[0]?.events ?? 1) / (printCount[0]?.print ?? 1)) *
+                ((eventCount[0]?.events ?? 0) / (printCount[0]?.print ?? 1)) *
                 100
             ).toFixed(2)
         );
