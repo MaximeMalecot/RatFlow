@@ -31,6 +31,11 @@ export interface AvgPagePerSession {
     unit: string;
 }
 
+export interface ClickRate {
+    value: number;
+    unit: string;
+}
+
 class AnalyticsService {
     async getAllStats(id: string, filters: GetAllStatsFilters) {
         const filterQueryParams = new URLSearchParams(filters as any);
@@ -120,6 +125,23 @@ class AnalyticsService {
     async getAvgPagePerSession(appId: string): Promise<AvgPagePerSession> {
         const res = await fetch(
             `${API_ENDPOINT}/analytics/${appId}/pagePerSessionAvg`,
+            {
+                method: "GET",
+                headers: {
+                    ...authHeader(),
+                },
+            }
+        );
+        if (res.status !== 200) throw new Error("Failed to fetch data");
+        return await res.json();
+    }
+
+    async getTagClickThroughRate(
+        appId: string,
+        tagId: string
+    ): Promise<ClickRate> {
+        const res = await fetch(
+            `${API_ENDPOINT}/analytics/${appId}/getClickThroughRate/${tagId}`,
             {
                 method: "GET",
                 headers: {
