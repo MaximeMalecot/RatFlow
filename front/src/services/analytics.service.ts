@@ -26,6 +26,11 @@ export interface AvgSessionDuration {
     unit: string;
 }
 
+export interface AvgPagePerSession {
+    value: number;
+    unit: string;
+}
+
 class AnalyticsService {
     async getAllStats(id: string, filters: GetAllStatsFilters) {
         const filterQueryParams = new URLSearchParams(filters as any);
@@ -98,9 +103,23 @@ class AnalyticsService {
         return await res.json();
     }
 
-    async getAvgSessionDuration(appId: string): Promise<SessionDuration> {
+    async getAvgSessionDuration(appId: string): Promise<AvgSessionDuration> {
         const res = await fetch(
             `${API_ENDPOINT}/analytics/${appId}/sessionDurationAvg`,
+            {
+                method: "GET",
+                headers: {
+                    ...authHeader(),
+                },
+            }
+        );
+        if (res.status !== 200) throw new Error("Failed to fetch data");
+        return await res.json();
+    }
+
+    async getAvgPagePerSession(appId: string): Promise<AvgPagePerSession> {
+        const res = await fetch(
+            `${API_ENDPOINT}/analytics/${appId}/pagePerSessionAvg`,
             {
                 method: "GET",
                 headers: {

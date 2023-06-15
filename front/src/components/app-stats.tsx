@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import analyticsService, {
+    AvgPagePerSession,
     AvgSessionDuration,
     BoucingRate,
 } from "../services/analytics.service";
@@ -20,6 +21,12 @@ export default function AppStats({ appId }: AppStatsProps) {
             unit: "s",
         });
 
+    const [avgPagePerSession, setAvgPagesPerSession] =
+        useState<AvgPagePerSession>({
+            value: 0,
+            unit: "",
+        });
+
     const fetchBouncingRate = async () => {
         try {
             const res = await analyticsService.getBoucingRate(appId);
@@ -38,9 +45,19 @@ export default function AppStats({ appId }: AppStatsProps) {
         }
     };
 
+    const fetchAvgPagesPerSession = async () => {
+        try {
+            const res = await analyticsService.getAvgPagePerSession(appId);
+            setAvgPagesPerSession(res);
+        } catch (e: any) {
+            console.error(e.message);
+        }
+    };
+
     useEffect(() => {
         fetchBouncingRate();
         fetchAvgSessionDuration();
+        fetchAvgPagesPerSession();
     }, []);
 
     return (
@@ -97,7 +114,7 @@ export default function AppStats({ appId }: AppStatsProps) {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        className="inline-block w-8 h-8 stroke-current"
+                        className="inline-block w-8 h-8 stroke-blue"
                     >
                         <path
                             strokeLinecap="round"
@@ -107,9 +124,9 @@ export default function AppStats({ appId }: AppStatsProps) {
                         ></path>
                     </svg>
                 </div>
-                <div className="stat-title">New Registers</div>
-                <div className="stat-value">1,200</div>
-                <div className="stat-desc">↘︎ 90 (14%)</div>
+                <div className="stat-title">Average pages per session</div>
+                <div className="stat-value">{avgPagePerSession.value}</div>
+                {/* <div className="stat-desc">↘︎ 90 (14%)</div> */}
             </div>
         </div>
     );
