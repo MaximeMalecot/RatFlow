@@ -57,12 +57,13 @@ export default function ManageAppLayout() {
         fetchApp();
     }, [id]);
 
-    if (loading) return <div className="px-20">Loading...</div>;
+    if (loading) return <div className="px-10 md:px-20">Loading...</div>;
 
-    if (!id || !app) return <div className="px-20">Invalid app id</div>;
+    if (!id || !app)
+        return <div className="px-10 md:px-20">Invalid app id</div>;
 
     return (
-        <div className="px-20 flex flex-col gap-2 py-5 ">
+        <div className="px-10 md:px-20 flex flex-col gap-2 py-5 ">
             <div className="flex justify-between">
                 <div className="text-sm breadcrumbs text-blue">
                     <ul>

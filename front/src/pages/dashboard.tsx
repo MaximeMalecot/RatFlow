@@ -34,7 +34,7 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="px-20">
+        <div className="px-10 md:px-20">
             <h1 className="text-2xl mb-5">Dashboard</h1>
             <div className="flex flex-col">
                 <div className="flex justify-between">
@@ -51,7 +51,7 @@ export default function Dashboard() {
                         <p className="italic">You have no app yet</p>
                     </div>
                 ) : (
-                    <div className="w-full my-5 grid grid-cols-5 gap-5">
+                    <div className="w-full my-5 grid grid-col-1 md:grid-cols-3 xl:grid-cols-5 gap-5">
                         {apps.map((app, idx) => (
                             <AppItem key={idx} app={app} />
                         ))}

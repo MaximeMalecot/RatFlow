@@ -8,7 +8,7 @@ export default function Header() {
 
     return (
         <header>
-            <div className="navbar bg-base-100 px-20">
+            <div className="navbar bg-base-100 px-10 md:px-20">
                 <div className="flex-1">
                     <Link
                         to="/"

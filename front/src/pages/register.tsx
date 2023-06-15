@@ -29,7 +29,7 @@ export default function Register() {
     }
 
     return (
-        <div className="px-20 bg-dark-blue py-10 flex justify-center">
+        <div className="px-10 md:px-20 bg-dark-blue py-10 flex justify-center">
             <div className="bg-white w-fit p-10 rounded rounded-xl flex flex-col gap-3">
                 <h1 className="uppercase text-xl font-bold text-center mb-3">
                     Welcome on Ratflow

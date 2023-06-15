@@ -2,7 +2,7 @@ import Logo from "../assets/logo.png";
 
 export default function Footer() {
     return (
-        <footer className="footer p-10 px-20 bg-base-200 text-base-content">
+        <footer className="footer p-10 px-10 md:px-20 bg-base-200 text-base-content">
             <div>
                 <div style={{ width: 80, height: 80 }}>
                     <img
