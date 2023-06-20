@@ -23,6 +23,6 @@ async function bootstrap() {
     });
     app.use(helmet());
 
-    await app.listen(3000);
+    await app.listen(80);
 }
 bootstrap();
