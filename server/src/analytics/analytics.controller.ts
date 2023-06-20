@@ -121,4 +121,10 @@ export class AnalyticsController {
     getBounceRate(@Param("appId", ParseObjectIdPipe) appId: string) {
         return this.analyticsService.getBounceRate(appId);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/pages")
+    getPages(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getPages(appId);
+    }
 }

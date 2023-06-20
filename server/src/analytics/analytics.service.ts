@@ -511,6 +511,27 @@ export class AnalyticsService {
         };
     }
 
+    async getPages(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const pages = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$url",
+                },
+            },
+        ]);
+
+        return pages.map((page) => page._id);
+    }
+
     async clear() {
         return await this.analyticModel.deleteMany({});
     }
