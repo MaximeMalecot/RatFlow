@@ -2,14 +2,14 @@ version: "3.8"
 
 services:
   db:
-    image: mongo:4.0
-    volumes:
-      - db_data:/data/db
-    ports: 
+    image: "mongo:latest"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
       - "27017:27017"
-    environment: 
-      - MONGO_INITDB_ROOT_USERNAME=mongo
-      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - "db_data:/data/db"
 
   server:
     build:
@@ -19,6 +19,10 @@ services:
     volumes:
       - ./server:/home/node
       - /home/node/node_modules
+    environment:
+      - NODE_ENV=dev
+      - DATABASE_URL=mongodb://root:password@db:27017/ratflow?authSource=admin
+      - JWT_SECRET=secret
     ports:
       - "3000:3000"
       - "5555:5555"
