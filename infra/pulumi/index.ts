@@ -84,12 +84,6 @@ const cloudRun = new gcp.cloudrun.Service("ratflow", {
       containers: [
         {
           image: "us-docker.pkg.dev/cloudrun/container/hello",
-          envs: [
-            {
-              name: "PORT",
-              value: "8080",
-            },
-          ],
         },
       ],
     },
