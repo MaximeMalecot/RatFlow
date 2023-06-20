@@ -1,12 +1,9 @@
 import * as gcp from "@pulumi/gcp";
 import { project } from "@pulumi/gcp/config";
 import * as pulumi from "@pulumi/pulumi";
-import * as dotenv from "dotenv";
-dotenv.config();
 
 const repo = "MaximeMalecot/RatFlow";
 const gcpLocation = "europe-west9";
-const DATABASE_URL = process.env.DATABASE_URL;
 
 // Create Artifact Registries and give access to all users
 const repository = new gcp.artifactregistry.Repository("ratflow", {
@@ -87,12 +84,6 @@ const cloudRun = new gcp.cloudrun.Service("ratflow", {
       containers: [
         {
           image: "us-docker.pkg.dev/cloudrun/container/hello",
-          envs: [
-            {
-              name: "DATABASE_URL",
-              value: DATABASE_URL,
-            },
-          ],
         },
       ],
     },
@@ -103,6 +94,7 @@ const cloudRun = new gcp.cloudrun.Service("ratflow", {
       percent: 100,
     },
   ],
+  autogenerateRevisionName: true,
 });
 
 // Make the Cloud Run instance public

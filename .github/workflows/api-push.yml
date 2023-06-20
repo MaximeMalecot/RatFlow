@@ -30,7 +30,6 @@ jobs:
           token_format: access_token
           workload_identity_provider: ${{ secrets.PROVIDER_ID}}
           service_account: ${{ secrets.SERVICE_ACCOUNT}}
-          access_token_lifetime: 600s
       - name: Login to Artifact Registry
         uses: docker/login-action@v1
         with:
@@ -51,5 +50,10 @@ jobs:
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
         with:
+          secrets: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            NODE_ENV=prod
+          region: europe-west9
           service: ${{ secrets.SERVICE_NAME }}
           image: europe-west9-docker.pkg.dev/${{ secrets.PROJECT_ID }}/analytics/ratflow-api:${{ steps.package-version.outputs.current-version}}

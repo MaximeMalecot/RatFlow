@@ -24,7 +24,7 @@ services:
       - DATABASE_URL=mongodb://root:password@db:27017/ratflow?authSource=admin
       - JWT_SECRET=secret
     ports:
-      - "3000:3000"
+      - "80:80"
       - "5555:5555"
     depends_on:
       - db
