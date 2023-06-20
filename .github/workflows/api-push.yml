@@ -50,7 +50,7 @@ jobs:
       - id: "deploy"
         uses: "google-github-actions/deploy-cloudrun@v1"
         with:
-          secrets: |
+          env_vars: |
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
             NODE_ENV=prod
