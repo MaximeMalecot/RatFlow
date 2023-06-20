@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import helmet from "helmet";
 import { AppModule } from "./app.module";
+import { appConstant } from "./constant";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -23,6 +24,6 @@ async function bootstrap() {
     });
     app.use(helmet());
 
-    await app.listen(80);
+    await app.listen(appConstant.port);
 }
 bootstrap();

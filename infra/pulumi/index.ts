@@ -97,13 +97,36 @@ const cloudRun = new gcp.cloudrun.Service("ratflow", {
   autogenerateRevisionName: true,
 });
 
-// Make the Cloud Run instance public
+// Service Account for Cloud Run
 new gcp.cloudrun.IamMember("cloudRunAdmin", {
   location: gcpLocation,
   project: project,
   service: cloudRun.name,
   role: "roles/run.admin",
   member: pulumi.interpolate`serviceAccount:${serviceAccount.email}`,
+});
+
+// Service Account for Cloud Build
+new gcp.projects.IAMBinding("buildEditor", {
+  project: project ?? "cinqoo",
+  members: [pulumi.interpolate`serviceAccount:${serviceAccount.email}`],
+  role: "roles/cloudbuild.builds.editor",
+});
+
+// Service Account for Storage
+new gcp.projects.IAMBinding("storageAdmin", {
+  project: project ?? "cinqoo",
+  members: [pulumi.interpolate`serviceAccount:${serviceAccount.email}`],
+  role: "roles/storage.objectAdmin",
+});
+
+// Ensure that actAs works for compute SA
+
+const defaultComputeServiceAccount = gcp.compute.getDefaultServiceAccount();
+new gcp.serviceaccount.IAMMember("actAsCompute", {
+  member: pulumi.interpolate`serviceAccount:${serviceAccount.email}`,
+  role: "roles/iam.serviceAccountUser",
+  serviceAccountId: defaultComputeServiceAccount.then((account) => account.id),
 });
 
 // Make the Cloud Run instance public
@@ -119,3 +142,6 @@ export const PROJECT_ID = project;
 export const SERVICE_ACCOUNT = serviceAccount.email;
 export const PROVIDER_ID = oidcProvider.name;
 export const CLOUD_RUN = cloudRun.name;
+export const DEFAULT_COMPUTE = defaultComputeServiceAccount.then(
+  (account) => account.email
+);
