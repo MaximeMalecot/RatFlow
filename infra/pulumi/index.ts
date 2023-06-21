@@ -141,7 +141,4 @@ new gcp.cloudrun.IamMember("myCloudRunIamMember", {
 export const PROJECT_ID = project;
 export const SERVICE_ACCOUNT = serviceAccount.email;
 export const PROVIDER_ID = oidcProvider.name;
-export const CLOUD_RUN = cloudRun.name;
-export const DEFAULT_COMPUTE = defaultComputeServiceAccount.then(
-  (account) => account.email
-);
+export const SERVICE_NAME = cloudRun.name;
