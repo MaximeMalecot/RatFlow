@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { useAuthContext } from "./contexts/auth.context";
 import AppLayout from "./layout/app-layout";
 import Home from "./pages/home";
+import BoucingRate from "./pages/manage-app/bouncing-rate";
 import NotFound from "./pages/not-found";
 
 const Login = lazy(() => import("./pages/login"));
@@ -46,6 +47,10 @@ function App() {
                                     <Route
                                         path="analytics"
                                         element={<Analytics />}
+                                    />
+                                    <Route
+                                        path="boucing-rate"
+                                        element={<BoucingRate />}
                                     />
                                 </Route>
                                 <Route

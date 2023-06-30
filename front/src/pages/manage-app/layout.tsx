@@ -23,6 +23,11 @@ function SideMenu({ baseUrl }: { baseUrl: string }) {
                         <li>
                             <Link to={`${baseUrl}/analytics`}>Analytics</Link>
                         </li>
+                        <li>
+                            <Link to={`${baseUrl}/boucing-rate`}>
+                                Boucing rate
+                            </Link>
+                        </li>
                     </ul>
                 </details>
             </li>

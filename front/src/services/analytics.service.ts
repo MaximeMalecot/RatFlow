@@ -19,6 +19,10 @@ export interface GetAllStatsFilters {
 export interface BoucingRate {
     value: number;
     unit: string;
+    frequentlyBouncedUrl: {
+        count: number;
+        url: string;
+    }[];
 }
 
 export interface AvgSessionDuration {

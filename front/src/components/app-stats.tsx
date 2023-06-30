@@ -13,6 +13,7 @@ export default function AppStats({ appId }: AppStatsProps) {
     const [boucingRate, setBoucingRate] = useState<BoucingRate>({
         value: 0,
         unit: "%",
+        frequentlyBouncedUrl: [],
     });
 
     const [avgSessionDuration, setAvgSessionDuration] =
@@ -125,7 +126,9 @@ export default function AppStats({ appId }: AppStatsProps) {
                     </svg>
                 </div>
                 <div className="stat-title">Average pages per session</div>
-                <div className="stat-value">{avgPagePerSession.value}</div>
+                <div className="stat-value">
+                    {avgPagePerSession.value.toFixed(2)}
+                </div>
                 {/* <div className="stat-desc">↘︎ 90 (14%)</div> */}
             </div>
         </div>
