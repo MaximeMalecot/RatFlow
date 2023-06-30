@@ -508,8 +508,10 @@ export class AnalyticsService {
         ]);
 
         return {
-            value:
-                (sessionsBounced.length / sessionsCount[0].sessionCount) * 100,
+            value: sessionsCount?.[0]?.sessionCount
+                ? (sessionsBounced.length / sessionsCount?.[0]?.sessionCount) *
+                  100
+                : "0",
             unit: "%",
             frequentlyBouncedUrl: urls,
         };
