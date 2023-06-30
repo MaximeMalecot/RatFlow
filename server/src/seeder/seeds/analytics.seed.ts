@@ -41,15 +41,23 @@ export class AnalyticSeed {
                     });
                     i++
                 ) {
+                    let monthStart = (new Date().getMonth() + 1).toString();
+                    let monthEnd = (parseInt(monthStart) - 1).toString();
+                    monthStart =
+                        parseInt(monthStart) > 10
+                            ? monthStart
+                            : `0${monthStart}`;
+                    monthEnd =
+                        parseInt(monthEnd) > 10 ? monthEnd : `0${monthEnd}`;
                     const sessionStart = faker.date.between({
                         from:
                             i % 2 == 0
-                                ? `2023-05-20T00:00:00.000Z`
-                                : `2023-04-20T00:00:00.000Z`,
+                                ? `2023-${monthStart}-20T00:00:00.000Z`
+                                : `2023-${monthEnd}-20T00:00:00.000Z`,
                         to:
                             i % 2 == 0
-                                ? `2023-05-30T00:00:00.000Z`
-                                : `2023-04-30T00:00:00.000Z`,
+                                ? `2023-${monthStart}-30T00:00:00.000Z`
+                                : `2023-${monthEnd}-30T00:00:00.000Z`,
                     });
                     const sessionMaxEnd = new Date(sessionStart);
                     sessionMaxEnd.setHours(sessionMaxEnd.getHours() + 2);
