@@ -17,6 +17,7 @@ import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { GetSessionStatsDto } from "./dto/get-sessions-stats.dto";
 import { PageViewDto } from "./dto/page-view.dto";
+import { SessionPeriodQueryDto } from "./dto/session-period-query.dto";
 import { CreateAnalyticsGuard } from "./guards/create-analytics.guard";
 import { GetAnalyticsGuard } from "./guards/get-analytics.guard";
 
@@ -69,9 +70,13 @@ export class AnalyticsController {
     @Get(":appId/sessionPerPeriod")
     getAvgSessionForPeriod(
         @Param("appId", ParseObjectIdPipe) appId: string,
-        @Query("scale") scale: "day" | "month" | "year" = "day"
+        @Query()
+        query: SessionPeriodQueryDto
     ) {
-        return this.analyticsService.getAvgSessionByTimeScale(appId, scale);
+        return this.analyticsService.getAvgSessionByTimeScale(
+            appId,
+            query.scale
+        );
     }
 
     @UseGuards(GetAnalyticsGuard)

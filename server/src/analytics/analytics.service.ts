@@ -164,10 +164,7 @@ export class AnalyticsService {
         };
     }
 
-    async getAvgSessionByTimeScale(
-        appId: string,
-        scale: "day" | "month" | "year"
-    ) {
+    async getAvgSessionByTimeScale(appId: string, scale: string) {
         const app = await this.appsService.getApp(appId);
         if (!app) {
             throw new NotFoundException("App not found");
