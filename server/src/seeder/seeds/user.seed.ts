@@ -15,14 +15,14 @@ export class UserSeed {
         await this.usersService.clear();
         let user = {
             email: "user@user.com",
-            password: "User123+",
+            password: "User123+=",
         };
         let admin = {
             email: "admin@admin.com",
-            password: "Admin123+",
+            password: "Admin123+=",
             roles: ["USER", "ADMIN"],
         };
-        const defaultPwd = "User123+";
+        const defaultPwd = "User123+=";
 
         let usersData = [user, admin];
         for (let i = 0; i < usersData.length; i++) {
