@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { AppsModule } from "src/apps/apps.module";
 import { Tag, TagSchema } from "./schema/tags.schema";
@@ -10,7 +10,7 @@ import { TagsService } from "./tags.service";
     providers: [TagsService],
     exports: [TagsService],
     imports: [
-        AppsModule,
+        forwardRef(() => AppsModule),
         MongooseModule.forFeature([{ name: Tag.name, schema: TagSchema }]),
     ],
 })

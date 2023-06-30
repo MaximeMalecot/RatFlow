@@ -1,8 +1,10 @@
 import {
     HttpException,
+    Inject,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
+    forwardRef,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from "mongoose";
@@ -12,12 +14,13 @@ import { TagsService } from "src/tags/tags.service";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { PageViewDto } from "./dto/page-view.dto";
 import { Analytic } from "./schema/analytic.schema";
-
 @Injectable()
 export class AnalyticsService {
     constructor(
         @InjectModel(Analytic.name) private analyticModel: Model<Analytic>,
+        @Inject(forwardRef(() => AppsService))
         private appsService: AppsService,
+        @Inject(forwardRef(() => TagsService))
         private tagService: TagsService
     ) {}
 
@@ -282,6 +285,7 @@ export class AnalyticsService {
                 return {
                     date: new Date(currentYear, month, 1).toISOString(),
                     value: stat?.[0]?.sessions ?? 0,
+                    unit: "session",
                 };
             })
         );
@@ -410,10 +414,7 @@ export class AnalyticsService {
             {
                 $group: {
                     _id: {
-                        $dateToString: {
-                            format: "%Y-%m-%d",
-                            date: "$createdAt",
-                        },
+                        $dateToString: scalePipe,
                     },
                     uniqueClientIds: { $addToSet: "$clientId" },
                 },
@@ -421,57 +422,118 @@ export class AnalyticsService {
             {
                 $group: {
                     _id: null,
-                    averageUniqueClientIdsPerDay: {
+                    avgClients: {
                         $avg: { $size: "$uniqueClientIds" },
                     },
                 },
             },
         ]);
-        // const res = await this.analyticModel.aggregate([
-        //     {
-        //         $match: {
-        //             appId: app.id,
-        //         },
-        //     },
-        //     {
-        //         $group: {
-        //             _id: {
-        //                 clientId: "$clientId",
-        //                 date: "$date",
-        //             },
-        //         },
-        //     },
-        //     {
-        //         $group: {
-        //             _id: {
-        //                 clientId: "$_id.clientId",
-        //             },
-        //             date: { $dateToString: scalePipe },
-        //         },
-        //     },
-        //     // {
-        //     //     $group: {
-        //     //         _id: {
-        //     //             $dateToString: scalePipe,
-        //     //         },
-        //     //     },
-        //     // },
-        // ]);
-        // const res = await this.analyticModel
-        //     .find({
-        //         appId: app.id,
-        //         date: {
-        //             $gte: new Date("2023-04-01"),
-        //             $lte: new Date("2023-04-30Z23:59:59"),
-        //         },
-        //     })
-        //     .count();
 
         return {
-            value: res,
-            unit: "session",
+            value: res[0].avgClients,
+            unit: "client",
             scale,
         };
+    }
+
+    async getBounceRate(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const sessionsCount = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$sessionId",
+                    events: { $addToSet: "$eventName" },
+                },
+            },
+            {
+                $count: "sessionCount",
+            },
+        ]);
+
+        const sessionsBounced = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$sessionId",
+                    events: { $addToSet: "$eventName" },
+                },
+            },
+            {
+                $match: {
+                    events: { $nin: ["page_changed"] },
+                },
+            },
+        ]);
+        const bouncedSessionIds = sessionsBounced.map((session) => session._id);
+        const urls = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    sessionId: { $in: bouncedSessionIds },
+                    eventName: "session_end",
+                },
+            },
+            {
+                $group: {
+                    _id: "$url",
+                    count: { $sum: 1 },
+                },
+            },
+            {
+                $sort: {
+                    count: -1,
+                },
+            },
+            {
+                $limit: 5,
+            },
+            {
+                $project: {
+                    _id: 0,
+                    url: "$_id",
+                    count: 1,
+                },
+            },
+        ]);
+
+        return {
+            value:
+                (sessionsBounced.length / sessionsCount[0].sessionCount) * 100,
+            unit: "%",
+            frequentlyBouncedUrl: urls,
+        };
+    }
+
+    async getPages(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const pages = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$url",
+                },
+            },
+        ]);
+
+        return pages.map((page) => page._id);
     }
 
     async clear() {
@@ -498,5 +560,18 @@ export class AnalyticsService {
                 $count: "sessions",
             },
         ]);
+    }
+
+    async removeAllAnalyticsByAppId(appId: string) {
+        try {
+            return await this.analyticModel.deleteMany({
+                appId,
+            });
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException(e.message);
+        }
     }
 }

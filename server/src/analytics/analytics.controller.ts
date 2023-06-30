@@ -115,4 +115,16 @@ export class AnalyticsController {
     ) {
         return this.analyticsService.getAvgClientByTimeScale(appId, scale);
     }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/bounceRate")
+    getBounceRate(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getBounceRate(appId);
+    }
+
+    @UseGuards(GetAnalyticsGuard)
+    @Get(":appId/pages")
+    getPages(@Param("appId", ParseObjectIdPipe) appId: string) {
+        return this.analyticsService.getPages(appId);
+    }
 }

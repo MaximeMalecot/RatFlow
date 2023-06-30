@@ -41,10 +41,10 @@
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.2.0",
         "uuid": "^9.0.0",
-        "yargs": "^17.7.2"
+        "yargs": "^17.7.2",
+        "@faker-js/faker": "^8.0.2"
     },
     "devDependencies": {
-        "@faker-js/faker": "^8.0.2",
         "@nestjs/cli": "^9.0.0",
         "@nestjs/schematics": "^9.0.0",
         "@nestjs/testing": "^9.0.0",
