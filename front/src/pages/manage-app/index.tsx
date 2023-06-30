@@ -10,6 +10,7 @@ import {
     YAxis,
 } from "recharts";
 import AppStats from "../../components/app-stats";
+import MonthlyStats from "../../components/monthly-stats";
 import { useAppContext } from "../../contexts/manage-app.context";
 import analyticsService, {
     StatsOfCurrentYear,
@@ -27,6 +28,10 @@ export default function ManageApp() {
             })),
         [yearStats]
     );
+
+    useEffect(() => {
+        console.log(mappedYearStats);
+    }, [mappedYearStats]);
 
     const fetchYearStats = async () => {
         const stats = await analyticsService.getStatsOfCurrentYear(app._id);
@@ -77,12 +82,7 @@ export default function ManageApp() {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-            <div
-                className="flex flex-col gap-3 border-2 border-slate-200 p-3 rounded rounded-xl"
-                style={{ width: "100%", height: "30vh" }}
-            >
-                <h3 className="text-xl ">Monthly sessions stats</h3>
-            </div>
+            <MonthlyStats date={new Date()} />
         </div>
     );
 }

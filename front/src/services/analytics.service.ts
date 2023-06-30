@@ -70,9 +70,9 @@ class AnalyticsService {
         return await res.json();
     }
 
-    async getSessionStatsForMonth(id: string) {
+    async getSessionStatsForMonth(id: string, date: string) {
         const res = await fetch(
-            `${API_ENDPOINT}/analytics/${id}/sessionStatsForMonth`,
+            `${API_ENDPOINT}/analytics/${id}/sessionStatsForMonth?date=${date}`,
             {
                 method: "GET",
                 headers: {

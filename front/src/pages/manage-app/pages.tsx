@@ -63,7 +63,7 @@ interface Props {
 
 function PageStatsRow({ appId, page }: Props) {
     const [stats, setStats] = useState<PageView | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [_, setLoading] = useState<boolean>(false);
 
     const fetchStats = async () => {
         try {
