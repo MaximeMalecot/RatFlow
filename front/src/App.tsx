@@ -4,6 +4,7 @@ import { useAuthContext } from "./contexts/auth.context";
 import AppLayout from "./layout/app-layout";
 import Home from "./pages/home";
 import BoucingRate from "./pages/manage-app/bouncing-rate";
+import Pages from "./pages/manage-app/pages";
 import NotFound from "./pages/not-found";
 
 const Login = lazy(() => import("./pages/login"));
@@ -52,6 +53,7 @@ function App() {
                                         path="boucing-rate"
                                         element={<BoucingRate />}
                                     />
+                                    <Route path="pages" element={<Pages />} />
                                 </Route>
                                 <Route
                                     path="/dashboard"

@@ -86,7 +86,7 @@ class AnalyticsService {
 
     async getPageView(appId: string, pageUrl: string): Promise<PageView> {
         const res = await fetch(
-            `${API_ENDPOINT}/analytics/${appId}/getPageView?=url=${pageUrl}`,
+            `${API_ENDPOINT}/analytics/${appId}/getPageView?url=${pageUrl}`,
             {
                 method: "GET",
                 headers: {
@@ -95,6 +95,17 @@ class AnalyticsService {
             }
         );
         if (res.status !== 200) throw new Error("Failed to fetch stats");
+        return await res.json();
+    }
+
+    async getPages(appId: string): Promise<string[]> {
+        const res = await fetch(`${API_ENDPOINT}/analytics/${appId}/pages`, {
+            method: "GET",
+            headers: {
+                ...authHeader(),
+            },
+        });
+        if (res.status !== 200) throw new Error("Failed to fetch pages");
         return await res.json();
     }
 

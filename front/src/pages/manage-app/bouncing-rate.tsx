@@ -99,7 +99,7 @@ export default function BoucingRate() {
                     style={{ width: "30%" }}
                     className="flex flex-col gap-3 border border-1 p-5"
                 >
-                    <h3 className="text-xl">Urls</h3>
+                    <h3 className="text-xl">Worst urls</h3>
                     <div className="divider my-0"></div>
                     <ul>
                         {data.length === 0 && <p>There is no url</p>}
