@@ -18,11 +18,19 @@ export default function Analytics() {
         eventName: null,
         date: null,
         tagId: null,
-        skip: 0,
-        limit: 10,
     });
 
-    const fetchAnalytics = async (data: GetAllStatsFilters) => {
+    const [pagination, setPagination] = useState({
+        skip: 0,
+        limit: 10,
+        canLoadMore: true,
+    });
+
+    const fetchAnalytics = async (
+        data: GetAllStatsFilters,
+        pagination: any,
+        initial?: boolean
+    ) => {
         try {
             const params: GetAllStatsFilters = Object.entries(data).reduce(
                 (acc, [key, value]) => {
@@ -33,12 +41,32 @@ export default function Analytics() {
                 },
                 {} as GetAllStatsFilters
             );
-            const res = await analyticsService.getAllStats(app._id, params);
-            setAnalytics(res);
+            const res = await analyticsService.getAllStats(app._id, {
+                ...params,
+                ...pagination,
+            });
+
+            if (res.length === 0) {
+                setPagination((prev) => ({ ...prev, canLoadMore: false }));
+            }
+            if (initial) {
+                setAnalytics(res);
+            } else {
+                setAnalytics((prev) => [...prev, ...res]);
+            }
         } catch (e: any) {
             console.error(e.message);
             displayMsg("error", e.message);
         }
+    };
+
+    const fetchMoreAnalytics = async () => {
+        const tmpPagination = {
+            ...pagination,
+            skip: pagination.skip + pagination.limit,
+        };
+        setPagination(tmpPagination);
+        fetchAnalytics(filters, tmpPagination);
     };
 
     const handleSelectField = (key: string, value: string) => {
@@ -49,7 +77,7 @@ export default function Analytics() {
     };
 
     useEffect(() => {
-        fetchAnalytics(filters);
+        fetchAnalytics(filters, pagination, true);
     }, [app]);
 
     return (
@@ -66,7 +94,7 @@ export default function Analytics() {
                 <AnalyticsFiltersSelector
                     filters={filters}
                     setFilters={setFilters}
-                    onSubmit={fetchAnalytics}
+                    onSubmit={fetchMoreAnalytics}
                 />
                 <div className="divider my-0"></div>
                 <div>
@@ -98,6 +126,14 @@ export default function Analytics() {
                                 </tbody>
                             </table>
                         </div>
+                    )}
+                    {pagination.canLoadMore && (
+                        <button
+                            className="btn w-fit"
+                            onClick={fetchMoreAnalytics}
+                        >
+                            More
+                        </button>
                     )}
                 </div>
             </div>

@@ -21,9 +21,6 @@ function SideMenu({ baseUrl }: { baseUrl: string }) {
                             <Link to={`${baseUrl}/pages`}>Pages</Link>
                         </li>
                         <li>
-                            <Link to={`${baseUrl}/sessions`}>Sessions</Link>
-                        </li>
-                        <li>
                             <Link to={`${baseUrl}/analytics`}>Analytics</Link>
                         </li>
                         <li>
