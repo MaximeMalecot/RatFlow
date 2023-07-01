@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import NewTagModal from "../../components/new-tag-modal";
 import TagList from "../../components/tag-list";
+import HowToUseTagsModal from "../../components/tutorials/how-to-use-tags-modal";
 import { YellowBtn } from "../../components/yellow-btn";
 import { useAppContext } from "../../contexts/manage-app.context";
 import { Tag } from "../../interfaces/tag";
@@ -11,6 +11,7 @@ export default function Tags() {
     const { app } = useAppContext();
     const [tags, setTags] = useState<Tag[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showTutorialModal, setShowTutorialModal] = useState(false);
 
     const fetchTags = async () => {
         try {
@@ -67,13 +68,12 @@ export default function Tags() {
                     Tags allow you to track specific element of your front app,
                     such as a button, a form or an input.
                 </p>
-                <Link
-                    target="_blank"
-                    to={""}
+                <button
+                    onClick={() => setShowTutorialModal(true)}
                     className="text-sm text-blue border-b-2 border-b-blue w-fit"
                 >
                     How to use it?
-                </Link>
+                </button>
             </div>
             <div className="divider"></div>
             {tags.length === 0 ? (
@@ -87,6 +87,10 @@ export default function Tags() {
                 isOpen={isModalOpen}
                 setIsOpen={setIsModalOpen}
                 create={createTag}
+            />
+            <HowToUseTagsModal
+                isOpen={showTutorialModal}
+                setIsOpen={setShowTutorialModal}
             />
         </div>
     );
