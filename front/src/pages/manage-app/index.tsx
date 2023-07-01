@@ -24,14 +24,10 @@ export default function ManageApp() {
         () =>
             yearStats.map((stat) => ({
                 date: new Date(stat.date).toISOString().split("T")[0],
-                averageNumberOfVisitors: stat.value,
+                averageNumberOfSessions: stat.value,
             })),
         [yearStats]
     );
-
-    useEffect(() => {
-        console.log(mappedYearStats);
-    }, [mappedYearStats]);
 
     const fetchYearStats = async () => {
         const stats = await analyticsService.getStatsOfCurrentYear(app._id);
@@ -75,7 +71,7 @@ export default function ManageApp() {
                         <Legend />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Bar
-                            dataKey="averageNumberOfVisitors"
+                            dataKey="averageNumberOfSessions"
                             fill="#8884d8"
                             background={{ fill: "#eee" }}
                         />
