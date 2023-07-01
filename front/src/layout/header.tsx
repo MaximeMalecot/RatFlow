@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import FullLogo from "../assets/full-logo.png";
 import { YellowBtn } from "../components/yellow-btn";
+import { SDK_LINKS } from "../constants/links";
 import { useAuthContext } from "../contexts/auth.context";
 
 export default function Header() {
@@ -38,9 +39,7 @@ export default function Header() {
                                     <li>
                                         <a
                                             target="_blank"
-                                            href={
-                                                "https://github.com/MaximeMalecot/RatFlow-SDK"
-                                            }
+                                            href={SDK_LINKS.FRONT}
                                         >
                                             Front
                                         </a>
@@ -48,11 +47,33 @@ export default function Header() {
                                     <li>
                                         <a
                                             target="_blank"
-                                            href={
-                                                "https://github.com/MaximeMalecot/RatFlow-SDK"
-                                            }
+                                            href={SDK_LINKS.REACT}
+                                        >
+                                            React
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            target="_blank"
+                                            href={SDK_LINKS.BACK}
                                         >
                                             Back
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            target="_blank"
+                                            href={SDK_LINKS.EXPRESS}
+                                        >
+                                            EXPRESS
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            target="_blank"
+                                            href={SDK_LINKS.NESTJS_MS}
+                                        >
+                                            NestJS MS
                                         </a>
                                     </li>
                                 </ul>
