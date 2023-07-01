@@ -10,10 +10,14 @@ export interface PageView {
 }
 
 export interface GetAllStatsFilters {
-    limit?: number;
-    date?: Date;
-    tagId?: string;
-    eventName?: string;
+    clientId?: string | null;
+    service?: string | null;
+    url?: string | null;
+    skip?: number | null;
+    eventName?: string | null;
+    limit?: number | null;
+    date?: Date | null;
+    tagId?: string | null;
 }
 
 export interface BoucingRate {

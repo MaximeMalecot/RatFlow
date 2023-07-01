@@ -22,54 +22,40 @@ function App() {
     const { isConnected } = useAuthContext();
 
     return (
-        <div className="">
-            <Suspense fallback={<div>Loading...</div>}>
-                <Routes>
-                    <Route element={<AppLayout />}>
-                        {isConnected && (
-                            <>
+        <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+                <Route element={<AppLayout />}>
+                    {isConnected && (
+                        <>
+                            <Route
+                                path="/manage/app/:id"
+                                element={<ManageAppLayout />}
+                            >
+                                <Route path="" element={<ManageAppHome />} />
+                                <Route path="tags" element={<Tags />} />
+                                <Route path="sessions" element={<Sessions />} />
+                                <Route path="settings" element={<Settings />} />
                                 <Route
-                                    path="/manage/app/:id"
-                                    element={<ManageAppLayout />}
-                                >
-                                    <Route
-                                        path=""
-                                        element={<ManageAppHome />}
-                                    />
-                                    <Route path="tags" element={<Tags />} />
-                                    <Route
-                                        path="sessions"
-                                        element={<Sessions />}
-                                    />
-                                    <Route
-                                        path="settings"
-                                        element={<Settings />}
-                                    />
-                                    <Route
-                                        path="analytics"
-                                        element={<Analytics />}
-                                    />
-                                    <Route
-                                        path="boucing-rate"
-                                        element={<BoucingRate />}
-                                    />
-                                    <Route path="pages" element={<Pages />} />
-                                </Route>
-                                <Route
-                                    path="/dashboard"
-                                    element={<Dashboard />}
+                                    path="analytics"
+                                    element={<Analytics />}
                                 />
-                                <Route path="/account" element={<Account />} />
-                            </>
-                        )}
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/" element={<Home />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Route>
-                </Routes>
-            </Suspense>
-        </div>
+                                <Route
+                                    path="boucing-rate"
+                                    element={<BoucingRate />}
+                                />
+                                <Route path="pages" element={<Pages />} />
+                            </Route>
+                            <Route path="/dashboard" element={<Dashboard />} />
+                            <Route path="/account" element={<Account />} />
+                        </>
+                    )}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="*" element={<NotFound />} />
+                </Route>
+            </Routes>
+        </Suspense>
     );
 }
 

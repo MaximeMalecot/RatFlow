@@ -71,7 +71,7 @@ export default function ManageAppLayout() {
         return <div className="px-10 md:px-20">Invalid app id</div>;
 
     return (
-        <div className="px-10 md:px-20 flex flex-col gap-2 py-5 ">
+        <div className="px-10 md:px-20 w-full flex flex-col gap-2 py-5 ">
             <div className="flex justify-between">
                 <div className="text-sm breadcrumbs text-blue">
                     <ul>
@@ -84,7 +84,7 @@ export default function ManageAppLayout() {
                     </ul>
                 </div>
             </div>
-            <div className="flex flex-col md:flex-row w-full gap-3">
+            <div className="flex flex-col md:flex-row w-full gap-3 h-full">
                 <SideMenu baseUrl={baseUrl} />
                 <AppContextProvider app={app} reload={fetchApp}>
                     <Outlet />

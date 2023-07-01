@@ -82,7 +82,11 @@ export default function AppStats({ appId }: AppStatsProps) {
                 <div className="stat-title">
                     Bouncing rate ({boucingRate.unit})
                 </div>
-                <div className="stat-value">{boucingRate.value}</div>
+                <div className="stat-value">
+                    {typeof boucingRate.value === "number"
+                        ? boucingRate.value.toFixed(2)
+                        : boucingRate.value}
+                </div>
                 {/* <div className="stat-desc">Jan 1st - Feb 1st</div> */}
             </div>
 
