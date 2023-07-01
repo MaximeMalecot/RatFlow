@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import NewTagModal from "../../components/new-tag-modal";
 import TagList from "../../components/tag-list";
+import GetTagsVariableModal from "../../components/tutorials/get-tags-variable-modal";
 import HowToUseTagsModal from "../../components/tutorials/how-to-use-tags-modal";
 import { YellowBtn } from "../../components/yellow-btn";
 import { useAppContext } from "../../contexts/manage-app.context";
@@ -12,6 +13,7 @@ export default function Tags() {
     const [tags, setTags] = useState<Tag[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showTutorialModal, setShowTutorialModal] = useState(false);
+    const [showTagsVariableModal, setShowTagsVariableModal] = useState(false);
 
     const fetchTags = async () => {
         try {
@@ -74,6 +76,12 @@ export default function Tags() {
                 >
                     How to use it?
                 </button>
+                <button
+                    onClick={() => setShowTagsVariableModal(true)}
+                    className="btn btn-primary w-1/5"
+                >
+                    Get your variables
+                </button>
             </div>
             <div className="divider"></div>
             {tags.length === 0 ? (
@@ -91,6 +99,11 @@ export default function Tags() {
             <HowToUseTagsModal
                 isOpen={showTutorialModal}
                 setIsOpen={setShowTutorialModal}
+            />
+            <GetTagsVariableModal
+                tags={tags}
+                isOpen={showTagsVariableModal}
+                setIsOpen={setShowTagsVariableModal}
             />
         </div>
     );
