@@ -56,7 +56,6 @@ export default function MonthlyStats({ date }: Props) {
                 app._id,
                 date.toDateString()
             );
-            console.log(res);
             setStats(res);
         } catch (e: any) {
             console.log(e.message);

@@ -29,7 +29,6 @@ export default function PasswordSettings() {
                 return;
             }
             try {
-                console.log(data);
                 const res = await userService.updatePassword(
                     data!._id,
                     password,

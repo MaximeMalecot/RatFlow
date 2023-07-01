@@ -67,9 +67,7 @@ function PageStatsRow({ appId, page }: Props) {
 
     const fetchStats = async () => {
         try {
-            console.log("fetching stats for page", page);
             const res = await analyticsService.getPageView(appId, page);
-            console.log("res", res);
             setStats(res);
         } catch (e: any) {
             console.error(e.message);

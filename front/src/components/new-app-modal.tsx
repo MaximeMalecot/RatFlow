@@ -41,7 +41,6 @@ export default function NewAppModal({
     }, [isOpen]);
 
     const onSubmit = useCallback((data: any) => {
-        console.log("called");
         create(data.name);
         reset();
         setIsOpen(false);

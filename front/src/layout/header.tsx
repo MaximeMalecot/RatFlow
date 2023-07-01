@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import FullLogo from "../assets/full-logo.png";
 import { YellowBtn } from "../components/yellow-btn";
@@ -6,9 +7,39 @@ import { useAuthContext } from "../contexts/auth.context";
 
 export default function Header() {
     const { isConnected, data, logout } = useAuthContext();
+    const headerRef = useRef<HTMLHeadElement>(null);
+    const sdkMenuRef = useRef<HTMLLIElement>(null);
+    const accountMenuRef = useRef<HTMLLIElement>(null);
+
+    useEffect(() => {
+        const cb = () => {
+            if (
+                !sdkMenuRef?.current ||
+                !accountMenuRef?.current ||
+                !headerRef?.current
+            )
+                return;
+            // if (subMenuRef.current.contains(e.target)) return;
+            sdkMenuRef.current
+                .getElementsByTagName("details")[0]
+                .removeAttribute("open");
+
+            accountMenuRef.current
+                .getElementsByTagName("details")[0]
+                .removeAttribute("open");
+        };
+
+        if (headerRef.current) {
+            document.addEventListener("click", cb);
+
+            return () => {
+                document.removeEventListener("click", cb);
+            };
+        }
+    }, [headerRef]);
 
     return (
-        <header>
+        <header ref={headerRef}>
             <div className="navbar bg-base-100 px-10 md:px-20">
                 <div className="flex-1">
                     <Link
@@ -32,7 +63,7 @@ export default function Header() {
                 </div>
                 <div className="flex-none">
                     <ul className="menu menu-horizontal px-1">
-                        <li className="hidden md:block">
+                        <li ref={sdkMenuRef} className="hidden md:block">
                             <details>
                                 <summary>Libraries</summary>
                                 <ul className="p-2 bg-base-100">
@@ -65,7 +96,7 @@ export default function Header() {
                                             target="_blank"
                                             href={SDK_LINKS.EXPRESS}
                                         >
-                                            EXPRESS
+                                            Express
                                         </a>
                                     </li>
                                     <li>
@@ -84,7 +115,10 @@ export default function Header() {
                         {isConnected ? (
                             <div className="flex items-center gap-4">
                                 <ul className="menu menu-horizontal px-1">
-                                    <li className="hidden md:block">
+                                    <li
+                                        ref={accountMenuRef}
+                                        className="hidden md:block"
+                                    >
                                         <details>
                                             <summary>{data!.email}</summary>
                                             <ul className="p-2 bg-base-100">
