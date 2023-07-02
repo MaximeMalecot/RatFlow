@@ -74,6 +74,7 @@ export class AnalyticsService {
             }
             return await this.analyticModel
                 .find({
+                    appId: app.id,
                     ...filters,
                 })
                 .skip(paginate.skip)
