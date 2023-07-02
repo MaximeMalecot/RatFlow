@@ -13,6 +13,15 @@ interface Props {
   onSubmit: (data: GetAllStatsFilters) => void;
 }
 
+const initialFilters = {
+  clientId: null,
+  service: null,
+  url: null,
+  eventName: null,
+  date: null,
+  tagId: null,
+};
+
 export default function AnalyticsFiltersSelector({
   filters,
   setFilters,
@@ -20,6 +29,7 @@ export default function AnalyticsFiltersSelector({
 }: Props) {
   const { app, tags } = useAppContext();
   const [urls, setUrls] = useState<string[]>([]);
+  const canReset = Object.values(filters).some((value) => value !== null);
   const {
     register: registerField,
     handleSubmit,
@@ -125,6 +135,15 @@ export default function AnalyticsFiltersSelector({
       <button className="btn btn-primary w-fit" type="submit">
         Search
       </button>
+      {canReset && (
+        <button
+          className="btn btn-primary w-fit"
+          type="submit"
+          onClick={() => reset(initialFilters)}
+        >
+          Reset
+        </button>
+      )}
     </form>
   );
 }
