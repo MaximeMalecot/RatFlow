@@ -15,6 +15,7 @@ import { UsersService } from "src/users/users.service";
 import { CreateAppDto } from "./dto/create-app.dto";
 import { LinkMailWithAppDto } from "./dto/link-email-with-app.dto";
 import { LinkUserWithAppDto } from "./dto/link-user-with-app.dto";
+import { UpdateAppOriginsDto } from "./dto/update-app-origins.dto";
 import { UpdateAppDto } from "./dto/update-app.dto";
 import { App } from "./schema/app.schema";
 
@@ -35,6 +36,10 @@ export class AppsService {
 
     async getSelfApps(userId: string) {
         return this.appModel.find({ owner: userId });
+    }
+
+    async getWhiteListApps(userId: string) {
+        return await this.appModel.find({ users: { $in: [userId] } });
     }
 
     async getApp(id: string) {
@@ -69,6 +74,22 @@ export class AppsService {
         }
     }
 
+    async updateNameApp(id: string, name: string) {
+        const app = await this.appModel.findById(id);
+        if (!app) {
+            throw new BadRequestException("App not found");
+        }
+        name = name.trim();
+        if (name.length < 3) {
+            throw new BadRequestException(
+                "Name must be at least 3 characters long"
+            );
+        }
+
+        app.name = name;
+        return await app.save();
+    }
+
     async updateApp(id: string, updateAppDto: UpdateAppDto) {
         try {
             const app = await this.appModel.findById(id);
@@ -101,6 +122,16 @@ export class AppsService {
     async getAppOrigins(id: string) {
         const app = await this.appModel.findById(id);
         return app.origins;
+    }
+
+    async updateAppOrigins(id: string, data: UpdateAppOriginsDto) {
+        const app = await this.appModel.findById(id);
+        if (!app) {
+            throw new BadRequestException("App not found");
+        }
+        const { origins } = data;
+        app.origins = Array.from(new Set(origins));
+        return await app.save();
     }
 
     async findAll() {
@@ -139,7 +170,40 @@ export class AppsService {
             if (!app) {
                 throw new NotFoundException("App not found");
             }
-            return app.users;
+            const appWithUsers = await this.appModel
+                .aggregate([
+                    {
+                        $match: {
+                            _id: app._id,
+                        },
+                    },
+                    {
+                        $unwind: "$users",
+                    },
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "users",
+                            foreignField: "_id",
+                            as: "user",
+                        },
+                    },
+                    {
+                        $project: {
+                            "user.password": 0,
+                            "user.roles": 0,
+                            "user.createdAt": 0,
+                            "user.__v": 0,
+                            "user._id": 0,
+                        },
+                    },
+                ])
+                .then((apps) => {
+                    return apps.reduce((acc, curr) => {
+                        return [...acc, ...curr.user];
+                    }, []);
+                });
+            return appWithUsers ?? [];
         } catch (e) {
             if (e instanceof HttpException) throw e;
 

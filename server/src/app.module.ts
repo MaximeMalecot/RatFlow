@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
-import { APP_GUARD } from "@nestjs/core";
 import { MongooseModule } from "@nestjs/mongoose";
-import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { CommandModule } from "nestjs-command";
 import { AnalyticsModule } from "./analytics/analytics.module";
 import { AppController } from "./app.controller";
@@ -31,10 +30,10 @@ import { UsersModule } from "./users/users.module";
     controllers: [AppController],
     providers: [
         AppService,
-        {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
-        },
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: ThrottlerGuard,
+        // },
     ],
 })
 export class AppModule {}

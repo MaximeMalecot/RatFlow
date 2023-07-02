@@ -11,7 +11,6 @@ import mongoose, { Model } from "mongoose";
 import { AppsService } from "src/apps/apps.service";
 import { PaginationDto } from "src/dto/pagination.dto";
 import { TagsService } from "src/tags/tags.service";
-import { CreateAnalyticsDto } from "./dto/create-analytics.dto";
 import { GetAnalyticsDto } from "./dto/get-analytics.dto";
 import { PageViewDto } from "./dto/page-view.dto";
 import { Analytic } from "./schema/analytic.schema";
@@ -25,12 +24,17 @@ export class AnalyticsService {
         private tagService: TagsService
     ) {}
 
-    async create(data: CreateAnalyticsDto, appId: string) {
+    async create(data: any, appId: string) {
         if (data.tagId) {
             const tag = await this.tagService.findOne(data.tagId);
             if (!tag) {
                 throw new NotFoundException("Tag not found");
             }
+        }
+        if (data.eventName === "session_end") {
+            const { sessionStart, sessionEnd } = data.customData as any;
+            data.customData.sessionStart = new Date(sessionStart);
+            data.customData.sessionEnd = new Date(sessionEnd);
         }
         const analytic = new this.analyticModel({ ...data, appId });
         return analytic.save();
@@ -70,6 +74,7 @@ export class AnalyticsService {
             }
             return await this.analyticModel
                 .find({
+                    appId: app.id,
                     ...filters,
                 })
                 .skip(paginate.skip)
@@ -104,7 +109,7 @@ export class AnalyticsService {
                             $dateDiff: {
                                 startDate: "$customData.sessionStart",
                                 endDate: "$customData.sessionEnd",
-                                unit: "minute",
+                                unit: "second",
                             },
                         },
                     },
@@ -120,8 +125,8 @@ export class AnalyticsService {
             },
         ]);
         return {
-            value: res[0].avgDuration,
-            unit: "minute",
+            value: res[0]?.avgDuration.toFixed(2) ?? 0,
+            unit: "second",
         };
     }
 
@@ -155,15 +160,12 @@ export class AnalyticsService {
             },
         ]);
         return {
-            value: res[0].avgPages,
+            value: res[0]?.avgPages ?? 0,
             unit: "pages",
         };
     }
 
-    async getAvgSessionByTimeScale(
-        appId: string,
-        scale: "day" | "month" | "year"
-    ) {
+    async getAvgSessionByTimeScale(appId: string, scale: string) {
         const app = await this.appsService.getApp(appId);
         if (!app) {
             throw new NotFoundException("App not found");
@@ -215,7 +217,7 @@ export class AnalyticsService {
         ]);
 
         return {
-            value: res[0].avgSessions,
+            value: res[0]?.avgSessions ?? 0,
             unit: "session",
             scale,
         };
@@ -238,8 +240,8 @@ export class AnalyticsService {
             app.id
         );
 
-        const desiredMonthValue = desiredMonth[0].sessions ?? 1;
-        const previousMonthValue = previousMonth[0].sessions ?? 1;
+        const desiredMonthValue = desiredMonth[0]?.sessions ?? 1;
+        const previousMonthValue = previousMonth[0]?.sessions ?? 1;
 
         let growth = parseFloat(
             (
@@ -251,11 +253,11 @@ export class AnalyticsService {
 
         return {
             desiredMonth: {
-                value: desiredMonth[0].sessions,
+                value: desiredMonth[0]?.sessions ?? 0,
                 unit: "session",
             },
             previousMonth: {
-                value: previousMonth[0].sessions,
+                value: previousMonth[0]?.sessions ?? 0,
                 unit: "session",
             },
             growth: {
@@ -328,7 +330,7 @@ export class AnalyticsService {
 
         const rate = parseFloat(
             (
-                ((eventCount[0].events ?? 1) / (printCount[0].print ?? 1)) *
+                ((eventCount[0]?.events ?? 0) / (printCount[0]?.print ?? 1)) *
                 100
             ).toFixed(2)
         );
@@ -504,11 +506,34 @@ export class AnalyticsService {
         ]);
 
         return {
-            value:
-                (sessionsBounced.length / sessionsCount[0].sessionCount) * 100,
+            value: sessionsCount?.[0]?.sessionCount
+                ? (sessionsBounced.length / sessionsCount?.[0]?.sessionCount) *
+                  100
+                : "0",
             unit: "%",
             frequentlyBouncedUrl: urls,
         };
+    }
+
+    async getPages(appId: string) {
+        const app = await this.appsService.getApp(appId);
+        if (!app) {
+            throw new NotFoundException("App not found");
+        }
+        const pages = await this.analyticModel.aggregate([
+            {
+                $match: {
+                    appId: app.id,
+                },
+            },
+            {
+                $group: {
+                    _id: "$url",
+                },
+            },
+        ]);
+
+        return pages.map((page) => page._id);
     }
 
     async clear() {
