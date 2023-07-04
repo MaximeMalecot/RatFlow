@@ -104,13 +104,31 @@ export class AnalyticsService {
             {
                 $group: {
                     _id: null,
+                    // duration: {
+                    //     $avg: {
+                    //         $cond: {
+                    //             if: {
+                    //                 $eq: [
+                    //                     "$customData.sessionStart",
+                    //                     "$customData.sessionEnd",
+                    //                 ],
+                    //             },
+                    //             then: 0,
+                    //             else: {
+                    //                 $subtract: [
+                    //                     "$customData.sessionEnd",
+                    //                     "$customData.sessionStart",
+                    //                 ],
+                    //             },
+                    //         },
+                    //     },
+                    // },
                     duration: {
                         $avg: {
-                            $dateDiff: {
-                                startDate: "$customData.sessionStart",
-                                endDate: "$customData.sessionEnd",
-                                unit: "second",
-                            },
+                            $subtract: [
+                                "$customData.sessionEnd",
+                                "$customData.sessionStart",
+                            ],
                         },
                     },
                 },
@@ -124,9 +142,11 @@ export class AnalyticsService {
                 },
             },
         ]);
+        const duration = res[0]?.avgDuration / 1000;
+        const value = Number.isNaN(duration) ? "0" : duration.toFixed(2);
         return {
-            value: res[0]?.avgDuration.toFixed(2) ?? 0,
-            unit: "second",
+            value,
+            unit: "seconds",
         };
     }
 
