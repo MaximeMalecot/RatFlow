@@ -139,9 +139,14 @@ export default function Header() {
                                 </Link>
                             </div>
                         ) : (
-                            <Link to={"/register"}>
-                                <YellowBtn>Try</YellowBtn>
-                            </Link>
+                            <div className="flex gap-2">
+                                <Link to={"/register"}>
+                                    <YellowBtn>Try</YellowBtn>
+                                </Link>
+                                <Link to={"/login"}>
+                                    <YellowBtn>Login</YellowBtn>
+                                </Link>
+                            </div>
                         )}
                     </div>
                 </div>
